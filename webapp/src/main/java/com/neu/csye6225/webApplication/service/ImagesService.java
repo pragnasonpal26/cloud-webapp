@@ -20,8 +20,8 @@ public class ImagesService {
     }
 
     @Transactional
-    public Optional<Images> getImage(Long bookId, String imageId) {
-        return imageRepository.findByIdAndImageId(bookId,imageId);
+    public Optional<Images> getImage(Long bookId, Long id) {
+        return imageRepository.findByBookIdAndId(bookId,id);
     }
 
     public Images saveImage(Images images) {

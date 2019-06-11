@@ -67,10 +67,10 @@ public class BooksController {
 		return new ResponseEntity<>(postBook, HttpStatus.NO_CONTENT);
 	}
 
-	@GetMapping("/book/{id}/image/{idImage}")
+	@GetMapping("/book/{bookId}/image/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public Images getCoverImage(@PathVariable Long id, @PathVariable String url) {
-		Optional<Images> images = imagesService.getImage(id,url);
+	public Images getCoverImage(@PathVariable Long bookId, @PathVariable Long id) {
+		Optional<Images> images = imagesService.getImage(bookId,id);
 		if (!images.isPresent())
 			System.out.println("Catch this and display no such Images etc.");
 		return images.get();

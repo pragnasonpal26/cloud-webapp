@@ -8,12 +8,12 @@ import javax.validation.constraints.Size;
 @Table(name= "images")
 public class Images {
     @Id
-    @Column(name = "imageId")
-    private String imageId;
+    @Column(name = "id")
+    private Long id;
 
     @NotNull
     @Column(name = "bookId")
-    private String bookId;
+    private Long bookId;
 
     @NotNull
     @Column(name = "url")
@@ -23,19 +23,19 @@ public class Images {
     @Column(name = "physical_path")
     private String physicalPath;
 
-    public String getId() {
-        return imageId;
+    public Long getId() {
+        return id;
     }
 
-    public void setId(String id) {
-        this.imageId = id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getBookId() {
+    public Long getBookId() {
         return bookId;
     }
 
-    public void setBookId(String bookId) {
+    public void setBookId(Long bookId) {
         this.bookId = bookId;
     }
 
