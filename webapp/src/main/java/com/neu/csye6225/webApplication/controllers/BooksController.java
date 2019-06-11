@@ -3,6 +3,8 @@ package com.neu.csye6225.webApplication.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import com.neu.csye6225.webApplication.entity.Images;
+import com.neu.csye6225.webApplication.service.ImagesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,9 @@ public class BooksController {
 
 	@Autowired
 	private BooksService booksService;
+
+	@Autowired
+	private ImagesService imagesService;
 
 	@GetMapping("/books")
 	@ResponseStatus(HttpStatus.OK)
@@ -60,6 +65,16 @@ public class BooksController {
 
 		booksService.update(postBook);
 		return new ResponseEntity<>(postBook, HttpStatus.NO_CONTENT);
+	}
+
+	@GetMapping("/book/{id}/image/{idImage}")
+	@ResponseStatus(HttpStatus.OK)
+	public Images getCoverImage(@PathVariable Long id, @PathVariable String url) {
+		Optional<Images> images = imagesService.getImage(id,url);
+		if (!images.isPresent())
+			System.out.println("Catch this and display no such Images etc.");
+		return images.get();
+
 	}
 
 }
