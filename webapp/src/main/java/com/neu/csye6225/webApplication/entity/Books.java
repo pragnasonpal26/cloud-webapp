@@ -1,17 +1,13 @@
 package com.neu.csye6225.webApplication.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 @Entity
 @Table(name= "books")
-public class Books {
+public class Books implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +29,26 @@ public class Books {
 
 	@Column(name = "quantity")
 	private int quantity;
+
+	@OneToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "idImageAttachment", nullable = false)
+	private Images images;
+
+	public Images getImages() {
+		return images;
+	}
+
+	public void setImages(Images images) {
+		this.images = images;
+	}
+
+	public Images getImage() {
+		return images;
+	}
+
+	public void setImage(Images image) {
+		this.images = image;
+	}
 
 	public int getQuantity() {
 		return quantity;

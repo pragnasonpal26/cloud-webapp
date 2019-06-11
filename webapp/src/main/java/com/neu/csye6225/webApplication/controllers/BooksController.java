@@ -77,4 +77,10 @@ public class BooksController {
 
 	}
 
+	@PostMapping("/book/{idBook}/image")
+	@ResponseStatus(HttpStatus.CREATED)
+	public Images postImage(@RequestBody Images postImages) {
+		return imagesService.saveImage(postImages);
+	}
+
 }

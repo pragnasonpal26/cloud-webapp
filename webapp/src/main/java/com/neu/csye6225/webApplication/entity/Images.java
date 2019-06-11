@@ -1,14 +1,20 @@
 package com.neu.csye6225.webApplication.entity;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name= "images")
-public class Images {
+public class Images implements Serializable {
     @Id
-    @Column(name = "id")
+    @Column(name = "id", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NotNull
@@ -22,6 +28,19 @@ public class Images {
     @NotNull
     @Column(name = "physical_path")
     private String physicalPath;
+
+    @OneToOne(fetch = FetchType.LAZY,
+            cascade =  CascadeType.ALL,
+            mappedBy = "images")
+    private Books books;
+
+    public Books getBooks() {
+        return books;
+    }
+
+    public void setBooks(Books books) {
+        this.books = books;
+    }
 
     public Long getId() {
         return id;
