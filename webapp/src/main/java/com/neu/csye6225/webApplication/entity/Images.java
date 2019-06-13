@@ -1,5 +1,6 @@
 package com.neu.csye6225.webApplication.entity;
 
+import ch.qos.logback.classic.db.names.ColumnName;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -12,22 +13,22 @@ import java.util.List;
 @Entity
 @Table(name= "images")
 public class Images{
+
     @Id
     @Column(name = "id", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NotNull
-    @Column(name = "bookId")
-    private Long bookId;
+    @Column(name = "imageId")
+    private String imageId;
 
     @NotNull
     @Column(name = "url")
     private String url;
 
-    @NotNull
-    @Column(name = "physical_path")
-    private String physicalPath;
+    @Column(name = "fileName")
+    private String fileName;
 
     public Long getId() {
         return id;
@@ -37,12 +38,12 @@ public class Images{
         this.id = id;
     }
 
-    public Long getBookId() {
-        return bookId;
+    public String getImageId() {
+        return imageId;
     }
 
-    public void setBookId(Long bookId) {
-        this.bookId = bookId;
+    public void setImageId(String imageId) {
+        this.imageId = imageId;
     }
 
     public String getUrl() {
@@ -53,11 +54,11 @@ public class Images{
         this.url = url;
     }
 
-    public String getPhysicalPath() {
-        return physicalPath;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setPhysicalPath(String physicalPath) {
-        this.physicalPath = physicalPath;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

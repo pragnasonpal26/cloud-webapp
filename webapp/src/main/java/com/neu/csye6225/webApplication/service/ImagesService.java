@@ -20,15 +20,15 @@ public class ImagesService {
     }
 
     @Transactional
-    public Optional<Images> getImage(Long bookId, Long id) {
-        return imageRepository.findByBookIdAndId(bookId,id);
+    public Optional<Images> getImage(Long id) {
+        return imageRepository.findById(id);
     }
 
     public Images saveImage(Images images) {
         return imageRepository.save(images);
     }
 
-    public void deleteImagess(Long id) {
+    public void deleteImages(Long id) {
         imageRepository.deleteById(id);
     }
 
