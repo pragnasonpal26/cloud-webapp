@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="88b5b48f-0d65-4f2c-be90-8c8dcc7be966" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/entity/DBFile.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/exception/FileStorageException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/exception/MyFileNotFoundException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/repository/DBFileRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/service/DBFileStorageService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_hibernate_hibernate_core_5_3_7_Final.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_javassist_javassist_3_23_1_GA.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/controllers/BooksController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/controllers/BooksController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/entity/Images.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/entity/Images.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/repository/ImageRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/repository/ImageRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/service/ImagesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/service/ImagesService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webApplication.iml" beforeDir="false" afterPath="$PROJECT_DIR$/webApplication.iml" afterDir="false" />
-    </list>
+    <list default="true" id="88b5b48f-0d65-4f2c-be90-8c8dcc7be966" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/classes/" />
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -33,8 +18,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/controllers/BooksController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="490">
-              <caret line="109" column="34" selection-start-line="109" selection-start-column="34" selection-end-line="109" selection-end-column="34" />
+            <state relative-caret-position="256">
+              <caret line="96" column="4" lean-forward="true" selection-start-line="96" selection-start-column="4" selection-end-line="96" selection-end-column="4" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -404,16 +389,15 @@
       <workItem from="1560222185461" duration="2658000" />
       <workItem from="1560285616389" duration="9076000" />
       <workItem from="1560299275295" duration="646000" />
-      <workItem from="1560449317207" duration="13289000" />
+      <workItem from="1560449317207" duration="14025000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="31904000" />
+    <option name="totallyTimeSpent" value="32640000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="67" y="25" width="1373" height="785" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2569706" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -425,7 +409,7 @@
       <window_info id="Web" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.08993903" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.5472561" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -707,8 +691,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/controllers/BooksController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="490">
-          <caret line="109" column="34" selection-start-line="109" selection-start-column="34" selection-end-line="109" selection-end-column="34" />
+        <state relative-caret-position="256">
+          <caret line="96" column="4" lean-forward="true" selection-start-line="96" selection-start-column="4" selection-end-line="96" selection-end-column="4" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

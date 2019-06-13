@@ -1,6 +1,11 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
     "Description": "Launch EC2 - CSYE 6225 Summer 2019",
+    "Parameters" : {
+      "stackName":{
+          "Type":"String"
+      }
+    },
     "Resources": {
         "myVPC": {
             "Type": "AWS::EC2::VPC",
@@ -11,8 +16,8 @@
                 "InstanceTenancy": "default",
                 "Tags": [
                     {
-                        "Key": "foo",
-                        "Value": "bar"
+                        "Key": "Name",
+                        "Value": {"Fn::Join": ["",[{"Ref": "AWS::StackName"},"-csye6225-vpc"]]} 
                     }
                 ]
             }
@@ -71,21 +76,25 @@
              }
          },
          "myRouteTable" : {
-            "Type" : "AWS::EC2::RouteTable",
-            "Properties" : {
-               "VpcId" : { "Ref" : "myVPC" },
-               "Tags" : [ { "Key" : "name", "Value" : "Public" } ]
-            }
+          "Type" : "AWS::EC2::RouteTable",
+          "Properties" : {
+             "VpcId" : { "Ref" : "myVPC" },
+             "Tags": [
+              {
+                "Key": "Name",
+                "Value": {"Fn::Join": ["",[{"Ref": "AWS::StackName"},"-csye6225-public-route-table"]]}
+              }
+            ]
+          }
          },
-         "PublicRoute": {
-            "Type": "AWS::EC2::Route",
-            "DependsOn": ["AttachGateway","myRouteTable"],
-            "Properties": {
-                "DestinationCidrBlock": "0.0.0.0/0",
-                "GatewayId": "myInternetGateway",
-                "RouteTableId": "myRouteTable"
-            }
-        },
+         "PublicRoute" : {
+          "Type" : "AWS::EC2::Route",
+          "Properties" : {
+             "RouteTableId" : { "Ref" : "myRouteTable" },
+             "DestinationCidrBlock" : "0.0.0.0/0",
+             "GatewayId" : { "Ref" : "myInternetGateway" }
+          }
+      },
          "Subnet1RouteTableAssociation" : {
             "Type" : "AWS::EC2::SubnetRouteTableAssociation",
             "Properties" : {
