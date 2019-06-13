@@ -3,17 +3,16 @@ package com.neu.csye6225.webApplication.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import com.neu.csye6225.webApplication.entity.Images;
+import com.neu.csye6225.webApplication.service.ImagesService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import com.neu.csye6225.webApplication.entity.Books;
 import com.neu.csye6225.webApplication.service.BooksService;
-
-import javax.validation.Valid;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
@@ -23,6 +22,12 @@ public class BooksController {
 
 	@Autowired
 	private BooksService booksService;
+
+	@Autowired
+	private ImagesService imagesService;
+
+	@Autowired
+	private com.neu.csye6225.webApplication.service.DBFileStorageService dbFileStorageService;
 
 	@GetMapping("/books")
 	@ResponseStatus(HttpStatus.OK)
@@ -44,6 +49,7 @@ public class BooksController {
 	@PostMapping("/books")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Books postBooks(@RequestBody Books postBooks) {
+		imagesService.saveImage(postBooks.getImage());
 		return booksService.saveBooks(postBooks);
 	}
 
@@ -60,6 +66,49 @@ public class BooksController {
 
 		booksService.update(postBook);
 		return new ResponseEntity<>(postBook, HttpStatus.NO_CONTENT);
+	}
+
+	@GetMapping("/book/{idBook}/image/{idImage}")
+	@ResponseStatus(HttpStatus.OK)
+	public Images getCoverImage(@PathVariable Long idBook, @PathVariable Long idImage) {
+		Optional<Books> singleBook = booksService.getBooks(idBook);
+		Images image = singleBook.get().getImage();
+		return image;
+
+	}
+
+	@PostMapping("/book/{idBook}/image")
+	@ResponseStatus(HttpStatus.CREATED)
+	public Images postImage(@RequestParam("file") MultipartFile file, @PathVariable Long idBook) {
+		Optional<Books> singleBook = booksService.getBooks(idBook);
+		Images image = singleBook.get().getImage();
+		dbFileStorageService.storeFile(file,image.getUrl());
+		image.setFileName(file.getOriginalFilename());
+		imagesService.update(image);
+		return image;
+	}
+
+	@PutMapping("/book/{idBook}/image/{idImage}")
+	public Images updateImage(@PathVariable Long idBook, @PathVariable Long idImage, @RequestParam("file") MultipartFile file) {
+		Books singleBook = booksService.getBooks(idBook).get();
+		Images image = singleBook.getImage();
+		image.setFileName(file.getOriginalFilename());
+		System.out.println("File name - " + file.getOriginalFilename());
+		dbFileStorageService.storeFile(file,image.getUrl());
+		imagesService.update(image);
+		return image;
+	}
+
+	@DeleteMapping("/book/{idBook}/image/{idImage}")
+	public ResponseEntity<String> deleteImage(@PathVariable Long idImage, @PathVariable Long idBook) {
+		Books singleBook = booksService.getBooks(idBook).get();
+		Images image = singleBook.getImage();
+		String filePath = singleBook.getImage().getUrl() + singleBook.getImage().getFileName();
+		dbFileStorageService.deleteFile(filePath);
+		image.setFileName("");
+		singleBook.getImage().setFileName("");
+		imagesService.update(image);
+		return new ResponseEntity("Deleted successfully!", HttpStatus.OK);
 	}
 
 }
