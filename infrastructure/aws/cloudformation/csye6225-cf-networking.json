@@ -74,9 +74,18 @@
             "Type" : "AWS::EC2::RouteTable",
             "Properties" : {
                "VpcId" : { "Ref" : "myVPC" },
-               "Tags" : [ { "Key" : "key2", "Value" : "value2" } ]
+               "Tags" : [ { "Key" : "name", "Value" : "Public" } ]
             }
          },
+         "PublicRoute": {
+            "Type": "AWS::EC2::Route",
+            "DependsOn": ["AttachGateway","myRouteTable"],
+            "Properties": {
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "GatewayId": "myInternetGateway",
+                "RouteTableId": "myRouteTable"
+            }
+        },
          "Subnet1RouteTableAssociation" : {
             "Type" : "AWS::EC2::SubnetRouteTableAssociation",
             "Properties" : {

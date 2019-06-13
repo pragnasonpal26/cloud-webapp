@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name= "images")
-public class Images implements Serializable {
+public class Images{
     @Id
     @Column(name = "id", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,19 +28,6 @@ public class Images implements Serializable {
     @NotNull
     @Column(name = "physical_path")
     private String physicalPath;
-
-    @OneToOne(fetch = FetchType.LAZY,
-            cascade =  CascadeType.ALL,
-            mappedBy = "images")
-    private Books books;
-
-    public Books getBooks() {
-        return books;
-    }
-
-    public void setBooks(Books books) {
-        this.books = books;
-    }
 
     public Long getId() {
         return id;

@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name= "books")
-public class Books implements Serializable {
+public class Books implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,17 +30,9 @@ public class Books implements Serializable {
 	@Column(name = "quantity")
 	private int quantity;
 
-	@OneToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "idImageAttachment", nullable = false)
+	@OneToOne(optional = true)
+	@JoinColumn(name = "idImageAttachment", nullable = true)
 	private Images images;
-
-	public Images getImages() {
-		return images;
-	}
-
-	public void setImages(Images images) {
-		this.images = images;
-	}
 
 	public Images getImage() {
 		return images;

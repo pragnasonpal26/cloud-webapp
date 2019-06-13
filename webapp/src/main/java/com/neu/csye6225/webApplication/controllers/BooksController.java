@@ -83,4 +83,19 @@ public class BooksController {
 		return imagesService.saveImage(postImages);
 	}
 
+	@PutMapping("/book/{idBook}/image/{idImage}")
+	public ResponseEntity<Images> updateImage(@RequestBody Images newImage) {
+		if (newImage == null)
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+		imagesService.update(newImage);
+		return new ResponseEntity<>(newImage, HttpStatus.NO_CONTENT);
+	}
+
+	@DeleteMapping("/book/{idBook}/image/{idImage}")
+	public ResponseEntity<String> deleteImage(@PathVariable Long idImage, @PathVariable Long idBook) {
+		imagesService.deleteImagess(idImage);
+		return new ResponseEntity("Deleted successfully!", HttpStatus.OK);
+	}
+
 }
