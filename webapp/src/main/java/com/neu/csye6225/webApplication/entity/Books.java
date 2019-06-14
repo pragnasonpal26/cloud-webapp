@@ -1,22 +1,18 @@
 package com.neu.csye6225.webApplication.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 @Entity
 @Table(name= "books")
-public class Books {
+public class Books implements Serializable{
 
 	@Id
 //	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
-	private String id;
+	private Long id;
 	
 	@NotNull
 	@Size(min=3, max=100)
@@ -33,6 +29,18 @@ public class Books {
 
 	@Column(name = "quantity")
 	private int quantity;
+
+	@OneToOne(optional = true)
+	@JoinColumn(name = "idImageAttachment", nullable = true)
+	private Images images;
+
+	public Images getImage() {
+		return images;
+	}
+
+	public void setImage(Images image) {
+		this.images = image;
+	}
 
 	public int getQuantity() {
 		return quantity;
@@ -63,14 +71,14 @@ public class Books {
 	/**
 	 * @return the id
 	 */
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
