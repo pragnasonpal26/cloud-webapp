@@ -19,7 +19,9 @@
 | Swagger (2.9.2)        | 
 | mysql-connector (5.1.6)| 
 | MySql Workbench        | 
-|IDE - Eclipse/IntelliJ  | 
+|IDE - Eclipse/IntelliJ  |
+| AWS                    |
+ 
 
 ## Build Instructions
 
