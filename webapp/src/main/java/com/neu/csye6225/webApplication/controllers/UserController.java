@@ -35,9 +35,10 @@ public class UserController {
 	
 	@PostMapping("/register")
 	@ResponseStatus(HttpStatus.CREATED)
-	public User create(@RequestBody User user) {
-		return userService.create(user);
+	public String create(@RequestBody User user) {
+		String message = userService.create(user);
+		if(message == "User already exists" || message == "Password length should be greater than 1" )
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
+		return message;
 	}
-	
-	
 }
