@@ -1,7 +1,11 @@
 package com.neu.csye6225.webApplication.controllers;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +22,16 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
+	
+	Date date= new Date();
+	long time = date.getTime();
+	
+	@GetMapping("/")
+	@ResponseStatus(HttpStatus.ACCEPTED)
+	public Timestamp login() {
+		Timestamp ts = new Timestamp(time);
+		return ts;
+	}
 	
 	@PostMapping("/register")
 	@ResponseStatus(HttpStatus.CREATED)
