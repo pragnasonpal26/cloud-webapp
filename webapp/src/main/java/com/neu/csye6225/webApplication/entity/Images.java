@@ -19,16 +19,11 @@ public class Images{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull
     @Column(name = "imageId")
     private String imageId;
 
-    @NotNull
     @Column(name = "url")
     private String url;
-
-    @Column(name = "fileName")
-    private String fileName;
 
     public Long getId() {
         return id;
@@ -52,13 +47,5 @@ public class Images{
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
     }
 }
