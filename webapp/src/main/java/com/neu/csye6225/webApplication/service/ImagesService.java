@@ -48,8 +48,8 @@ public class ImagesService {
         try {
             if(fileName.contains(".."))
                 throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
-            if(fileType != "image/png" || fileType != "image/jpeg" || fileType != "image/jpg")
-                throw new FileStorageException("Invalid file type " + fileType);
+            //if(fileType != "image/png" || fileType != "image/jpeg" || fileType != "image/jpg")
+                //throw new FileStorageException("Invalid file type " + fileType);
 
             File oldFile = new File(path);
             String newFilePath = oldFile.getParent() +  "/" + file.getOriginalFilename();
