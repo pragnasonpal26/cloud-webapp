@@ -27,10 +27,12 @@ public class BooksService {
 		return booksRepository.save(postBooks);
 	}
 
+	@Transactional
 	public void deleteBooks(UUID id) {
 		booksRepository.deleteById(id);
 	}
 
+	@Transactional
 	public void update(Books book) {
 		booksRepository.save(book);
 	}

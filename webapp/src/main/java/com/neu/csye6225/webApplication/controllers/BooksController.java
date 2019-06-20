@@ -83,16 +83,16 @@ public class BooksController {
 	public Images postImage(@RequestParam("file") MultipartFile file, @PathVariable String idBook) {
 		Optional<Books> singleBook = booksService.getBooks(UUID.fromString(idBook));
 		Images image = singleBook.get().getImage();
-		imagesService.storeFile(file,image.getUrl());
+		imagesService.storeFile(file,image);
 		return image;
 	}
 
 	@PutMapping("/book/{idBook}/image/{idImage}")
-	public Images updateImage(@PathVariable String idBook, @PathVariable Long idImage, @RequestParam("file") MultipartFile file) {
+	public Images updateImage(@PathVariable String idBook, @PathVariable String idImage, @RequestParam("file") MultipartFile file) {
 		Books singleBook = booksService.getBooks(UUID.fromString(idBook)).get();
 		Images image = singleBook.getImage();
 		imagesService.deleteFile(image.getUrl());
-		imagesService.storeFile(file,image.getUrl());
+		imagesService.storeFile(file,image);
 		return image;
 	}
 
@@ -101,8 +101,9 @@ public class BooksController {
 		Books singleBook = booksService.getBooks(UUID.fromString(idBook)).get();
 		Images image = singleBook.getImage();
 		imagesService.deleteFile(image.getUrl());
-		image.setUrl("");
-		imagesService.update(image);
+		singleBook.setImage(null);
+		booksService.update(singleBook);
+		imagesService.deleteImages(UUID.fromString(idImage));
 		return new ResponseEntity("Deleted successfully!", HttpStatus.OK);
 	}
 

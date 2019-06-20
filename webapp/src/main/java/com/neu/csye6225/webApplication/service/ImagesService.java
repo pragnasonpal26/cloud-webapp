@@ -13,6 +13,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ImagesService {
@@ -29,19 +30,17 @@ public class ImagesService {
         return imageRepository.findById(id);
     }
 
+    @Transactional
     public Images saveImage(Images images) {
         return imageRepository.save(images);
     }
 
-    public void deleteImages(String id) {
-        imageRepository.deleteById(id);
-    }
-
+    @Transactional
     public void update(Images images) {
         imageRepository.save(images);
     }
 
-    public void storeFile(MultipartFile file, String path) {
+    public void storeFile(MultipartFile file, Images image) {
         ArrayList<String> acceptedTypes = new ArrayList<String>();
         acceptedTypes.add("image/png");
         acceptedTypes.add("image/jpg");
@@ -56,7 +55,7 @@ public class ImagesService {
             if(!acceptedTypes.contains(fileType))
                 throw new FileStorageException("Invalid file type " + fileType);
 
-            File oldFile = new File(path);
+            File oldFile = new File(image.getUrl());
             String newFilePath = oldFile.getParent() +  "/" + file.getOriginalFilename();
 
             InputStream inputStream = file.getInputStream();
@@ -70,6 +69,8 @@ public class ImagesService {
             while ((read = inputStream.read(bytes)) != -1) {
                 outputStream.write(bytes, 0, read);
             }
+            image.setUrl(newFilePath);
+            update(image);
         } catch (IOException ex) {
             throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
         }
@@ -79,5 +80,10 @@ public class ImagesService {
         System.out.println(path);
         File fileToDelete = new File(path);
         fileToDelete.delete();
+    }
+
+    @Transactional
+    public void deleteImages(UUID fromString) {
+        imageRepository.deleteById(fromString);
     }
 }
