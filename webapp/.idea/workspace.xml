@@ -2,17 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="88b5b48f-0d65-4f2c-be90-8c8dcc7be966" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_3_8_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/controllers/BooksController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/controllers/BooksController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/entity/Books.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/entity/Books.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/entity/Images.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/entity/Images.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/repository/BooksRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/repository/BooksRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/repository/ImageRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/repository/ImageRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/service/BooksService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/service/BooksService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/service/ImagesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/service/ImagesService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webApplication.iml" beforeDir="false" afterPath="$PROJECT_DIR$/webApplication.iml" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/classes/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -39,8 +32,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/controllers/BooksController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="114">
-              <caret line="53" column="66" selection-start-line="53" selection-start-column="66" selection-end-line="53" selection-end-column="66" />
+            <state relative-caret-position="123">
+              <caret line="39" column="55" lean-forward="true" selection-start-line="39" selection-start-column="55" selection-end-line="39" selection-end-column="55" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -67,7 +60,9 @@
                 <element signature="e#336#337#0" expanded="true" />
                 <element signature="e#370#371#0" expanded="true" />
                 <element signature="e#398#399#0" expanded="true" />
+                <element signature="e#428#429#0" expanded="true" />
                 <element signature="e#454#455#0" expanded="true" />
+                <element signature="e#492#493#0" expanded="true" />
                 <element signature="e#522#523#0" expanded="true" />
               </folding>
             </state>
@@ -77,8 +72,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/repository/BooksRepository.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="20" column="8" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="8" />
+            <state relative-caret-position="60">
+              <caret line="11" column="17" selection-start-line="11" selection-start-column="17" selection-end-line="11" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -86,8 +81,12 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/service/BooksService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="35" column="36" selection-start-line="35" selection-start-column="36" selection-end-line="35" selection-end-column="36" />
+            <state relative-caret-position="302">
+              <caret line="38" column="27" selection-start-line="38" selection-start-column="27" selection-end-line="38" selection-end-column="27" />
+              <folding>
+                <element signature="e#992#993#0" expanded="true" />
+                <element signature="e#1024#1025#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -95,8 +94,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/entity/Books.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="109">
-              <caret line="58" column="5" selection-start-line="58" selection-start-column="5" selection-end-line="58" selection-end-column="5" />
+            <state relative-caret-position="207">
+              <caret line="16" column="29" selection-start-line="16" selection-start-column="29" selection-end-line="16" selection-end-column="29" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -178,11 +177,11 @@
         <option value="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/service/DBFileStorageService.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/service/ImagesService.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/repository/ImageRepository.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/entity/Images.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/service/BooksService.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/repository/BooksRepository.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/controllers/BooksController.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/entity/Books.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/entity/Images.java" />
       </list>
     </option>
   </component>
@@ -216,6 +215,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -306,7 +306,6 @@
         </subPane>
       </pane>
       <pane id="Scope" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -369,16 +368,18 @@
       <workItem from="1560520650315" duration="8422000" />
       <workItem from="1560987807487" duration="2967000" />
       <workItem from="1560996652304" duration="1147000" />
+      <workItem from="1561067833678" duration="1304000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="47184000" />
+    <option name="totallyTimeSpent" value="48488000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="67" y="25" width="1373" height="785" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.28259233" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2871138" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -388,7 +389,7 @@
       <window_info id="Web" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.21341464" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -522,20 +523,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/repository/BooksRepository.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="20" column="8" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/service/BooksService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="35" column="36" selection-start-line="35" selection-start-column="36" selection-end-line="35" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/service/ImagesService.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
@@ -563,16 +550,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/controllers/BooksController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="53" column="66" selection-start-line="53" selection-start-column="66" selection-end-line="53" selection-end-column="66" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/entity/Images.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
@@ -582,16 +559,46 @@
             <element signature="e#336#337#0" expanded="true" />
             <element signature="e#370#371#0" expanded="true" />
             <element signature="e#398#399#0" expanded="true" />
+            <element signature="e#428#429#0" expanded="true" />
             <element signature="e#454#455#0" expanded="true" />
+            <element signature="e#492#493#0" expanded="true" />
             <element signature="e#522#523#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/controllers/BooksController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="123">
+          <caret line="39" column="55" lean-forward="true" selection-start-line="39" selection-start-column="55" selection-end-line="39" selection-end-column="55" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/service/BooksService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="302">
+          <caret line="38" column="27" selection-start-line="38" selection-start-column="27" selection-end-line="38" selection-end-column="27" />
+          <folding>
+            <element signature="e#992#993#0" expanded="true" />
+            <element signature="e#1024#1025#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/repository/BooksRepository.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="11" column="17" selection-start-line="11" selection-start-column="17" selection-end-line="11" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/neu/csye6225/webApplication/entity/Books.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="109">
-          <caret line="58" column="5" selection-start-line="58" selection-start-column="5" selection-end-line="58" selection-end-column="5" />
+        <state relative-caret-position="207">
+          <caret line="16" column="29" selection-start-line="16" selection-start-column="29" selection-end-line="16" selection-end-column="29" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

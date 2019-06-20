@@ -16,7 +16,7 @@ public interface BooksRepository extends JpaRepository<Books, Long> {
 		@Query(value = findQuery, nativeQuery = true)
 		List<Books> findByQueryString(String queryString);
 
-	Optional<Books> findById(String id);
+	Optional<Books> findById(UUID id);
 
-	void deleteById(String id);
+	void deleteById(UUID id);
 }

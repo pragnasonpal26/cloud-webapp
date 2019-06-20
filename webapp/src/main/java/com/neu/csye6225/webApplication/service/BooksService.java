@@ -23,21 +23,20 @@ public class BooksService {
 		return booksRepository.findAll();
 	}
 
-	@Transactional
-	public Optional<Books> getBooks(String id) {
-		return booksRepository.findById(id);
-	}
-
 	public Books saveBooks(Books postBooks) {
 		return booksRepository.save(postBooks);
 	}
 
-	public void deleteBooks(String id) {
+	public void deleteBooks(UUID id) {
 		booksRepository.deleteById(id);
 	}
 
 	public void update(Books book) {
 		booksRepository.save(book);
 	}
-		
+
+	@Transactional
+	public Optional<Books> getBooks(UUID fromString) {
+		return booksRepository.findById(fromString);
+	}
 }

@@ -1,5 +1,7 @@
 package com.neu.csye6225.webApplication.entity;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -11,7 +13,8 @@ import java.util.UUID;
 public class Books implements Serializable{
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(generator = "uuid", strategy = GenerationType.AUTO)
+	@Type(type = "uuid-char")
 	private UUID id;
 	
 	@NotNull

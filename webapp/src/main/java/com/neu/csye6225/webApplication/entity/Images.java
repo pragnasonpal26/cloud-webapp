@@ -1,5 +1,7 @@
 package com.neu.csye6225.webApplication.entity;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.util.UUID;
 
@@ -8,7 +10,8 @@ import java.util.UUID;
 public class Images{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(generator = "uuid", strategy = GenerationType.AUTO)
+    @Type(type = "uuid-char")
     private UUID id;
 
     @Column(name = "url")
