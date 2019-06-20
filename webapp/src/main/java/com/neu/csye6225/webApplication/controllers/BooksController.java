@@ -35,7 +35,7 @@ public class BooksController {
 
 	@GetMapping("/books/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public Books getBooks(@PathVariable Long id) {
+	public Books getBooks(@PathVariable String id) {
 		Optional<Books> singleBook = booksService.getBooks(id);
 		if (!singleBook.isPresent())
 			System.out.println("Catch this and display no such Books etc.");
@@ -51,7 +51,7 @@ public class BooksController {
 	}
 
 	@DeleteMapping("/books/{id}")
-	public ResponseEntity<String> deleteBooks(@PathVariable Long id) {
+	public ResponseEntity<String> deleteBooks(@PathVariable String id) {
 		booksService.deleteBooks(id);
 		return new ResponseEntity("Deleted successfully!", HttpStatus.NO_CONTENT);
 	}
@@ -71,7 +71,7 @@ public class BooksController {
 
 	@GetMapping("/book/{idBook}/image/{idImage}")
 	@ResponseStatus(HttpStatus.OK)
-	public Images getCoverImage(@PathVariable Long idBook, @PathVariable Long idImage) {
+	public Images getCoverImage(@PathVariable String idBook, @PathVariable String idImage) {
 		Optional<Books> singleBook = booksService.getBooks(idBook);
 		Images image = singleBook.get().getImage();
 		return image;
@@ -79,7 +79,7 @@ public class BooksController {
 
 	@PostMapping("/book/{idBook}/image")
 	@ResponseStatus(HttpStatus.OK)
-	public Images postImage(@RequestParam("file") MultipartFile file, @PathVariable Long idBook) {
+	public Images postImage(@RequestParam("file") MultipartFile file, @PathVariable String idBook) {
 		Optional<Books> singleBook = booksService.getBooks(idBook);
 		Images image = singleBook.get().getImage();
 		imagesService.storeFile(file,image.getUrl());
@@ -87,7 +87,7 @@ public class BooksController {
 	}
 
 	@PutMapping("/book/{idBook}/image/{idImage}")
-	public Images updateImage(@PathVariable Long idBook, @PathVariable Long idImage, @RequestParam("file") MultipartFile file) {
+	public Images updateImage(@PathVariable String idBook, @PathVariable Long idImage, @RequestParam("file") MultipartFile file) {
 		Books singleBook = booksService.getBooks(idBook).get();
 		Images image = singleBook.getImage();
 		imagesService.deleteFile(image.getUrl());
@@ -96,11 +96,10 @@ public class BooksController {
 	}
 
 	@DeleteMapping("/book/{idBook}/image/{idImage}")
-	public ResponseEntity<String> deleteImage(@PathVariable Long idImage, @PathVariable Long idBook) {
+	public ResponseEntity<String> deleteImage(@PathVariable Long idImage, @PathVariable String idBook) {
 		Books singleBook = booksService.getBooks(idBook).get();
 		Images image = singleBook.getImage();
 		imagesService.deleteFile(image.getUrl());
-		image.setImageId("");
 		image.setUrl("");
 		imagesService.update(image);
 		return new ResponseEntity("Deleted successfully!", HttpStatus.OK);

@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ public class ImagesService {
     }
 
     @Transactional
-    public Optional<Images> getImage(Long id) {
+    public Optional<Images> getImage(String id) {
         return imageRepository.findById(id);
     }
 
@@ -32,7 +33,7 @@ public class ImagesService {
         return imageRepository.save(images);
     }
 
-    public void deleteImages(Long id) {
+    public void deleteImages(String id) {
         imageRepository.deleteById(id);
     }
 
@@ -41,6 +42,10 @@ public class ImagesService {
     }
 
     public void storeFile(MultipartFile file, String path) {
+        ArrayList<String> acceptedTypes = new ArrayList<String>();
+        acceptedTypes.add("image/png");
+        acceptedTypes.add("image/jpg");
+        acceptedTypes.add("image/jpeg");
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         String fileType = file.getContentType();
@@ -48,8 +53,8 @@ public class ImagesService {
         try {
             if(fileName.contains(".."))
                 throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
-            //if(fileType != "image/png" || fileType != "image/jpeg" || fileType != "image/jpg")
-                //throw new FileStorageException("Invalid file type " + fileType);
+            if(!acceptedTypes.contains(fileType))
+                throw new FileStorageException("Invalid file type " + fileType);
 
             File oldFile = new File(path);
             String newFilePath = oldFile.getParent() +  "/" + file.getOriginalFilename();
