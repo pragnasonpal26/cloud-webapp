@@ -1,18 +1,21 @@
 package com.neu.csye6225.webApplication.entity;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.UUID;
 
 @Entity
 @Table(name= "books")
 public class Books implements Serializable{
 
 	@Id
-//	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private Long id;
+	@GeneratedValue(generator = "uuid", strategy = GenerationType.AUTO)
+	@Type(type = "uuid-char")
+	private UUID id;
 	
 	@NotNull
 	@Size(min=3, max=100)
@@ -30,7 +33,7 @@ public class Books implements Serializable{
 	@Column(name = "quantity")
 	private int quantity;
 
-	@OneToOne(optional = true)
+	@OneToOne(optional = true, cascade=CascadeType.ALL)
 	@JoinColumn(name = "idImageAttachment", nullable = true)
 	private Images images;
 
@@ -58,27 +61,17 @@ public class Books implements Serializable{
 		this.isbn = isbn;
 	}
 
-
-	public Books(){}
-
-	public Books(@NotNull String name, @NotNull String author, @NotNull String isbn, int quantity) {
-		this.title = name;
-		this.author = author;
-		this.isbn = isbn;
-		this.quantity = quantity;
-	}
-
 	/**
 	 * @return the id
 	 */
-	public Long getId() {
+	public UUID getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(Long id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 
