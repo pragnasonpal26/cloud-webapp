@@ -33,7 +33,7 @@ public class Books implements Serializable{
 	@Column(name = "quantity")
 	private int quantity;
 
-	@OneToOne(optional = true)
+	@OneToOne(optional = true, cascade=CascadeType.ALL)
 	@JoinColumn(name = "idImageAttachment", nullable = true)
 	private Images images;
 
