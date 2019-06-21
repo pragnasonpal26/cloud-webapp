@@ -1,44 +1,28 @@
 package com.neu.csye6225.webApplication.entity;
 
-import ch.qos.logback.classic.db.names.ColumnName;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.io.Serializable;
-import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name= "images")
 public class Images{
 
     @Id
-    @Column(name = "id", unique = true, nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    @Column(name = "imageId")
-    private String imageId;
+    @GeneratedValue(generator = "uuid", strategy = GenerationType.AUTO)
+    @Type(type = "uuid-char")
+    private UUID id;
 
     @Column(name = "url")
     private String url;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
-    }
-
-    public String getImageId() {
-        return imageId;
-    }
-
-    public void setImageId(String imageId) {
-        this.imageId = imageId;
     }
 
     public String getUrl() {
