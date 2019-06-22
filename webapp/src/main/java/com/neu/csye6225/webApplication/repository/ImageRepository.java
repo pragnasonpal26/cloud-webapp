@@ -6,7 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ImageRepository extends JpaRepository<Images, Long> {
 
+    Optional<Images> findById(String id);
+
+    void deleteById(UUID id);
 }
