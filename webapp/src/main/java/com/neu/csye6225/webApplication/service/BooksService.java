@@ -2,6 +2,7 @@ package com.neu.csye6225.webApplication.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,21 +23,22 @@ public class BooksService {
 		return booksRepository.findAll();
 	}
 
-	@Transactional
-	public Optional<Books> getBooks(Long id) {
-		return booksRepository.findById(id);
-	}
-
 	public Books saveBooks(Books postBooks) {
 		return booksRepository.save(postBooks);
 	}
 
-	public void deleteBooks(Long id) {
+	@Transactional
+	public void deleteBooks(UUID id) {
 		booksRepository.deleteById(id);
 	}
 
+	@Transactional
 	public void update(Books book) {
 		booksRepository.save(book);
 	}
-		
+
+	@Transactional
+	public Optional<Books> getBooks(UUID fromString) {
+		return booksRepository.findById(fromString);
+	}
 }
