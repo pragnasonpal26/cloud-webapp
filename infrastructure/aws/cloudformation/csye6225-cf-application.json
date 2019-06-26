@@ -1,0 +1,76 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Cloud Formation template for application stack creation - csye6225 summer 19",
+
+    "Parameters" : {
+        "stackName":{
+            "Type":"String"
+        },
+        "ImageId":{
+            "Type":"String"
+        },
+        "InstanceType":{
+            "Type":"String"
+        },
+        "VPCID":{
+            "Type":"String"
+        },
+        "webSubnetID" : {
+            "Type" : "String"
+        },
+        "dbSubnetID" : {
+            "Type" : "String"
+        },
+        "SecurityGroupID" : {
+            "Type" : "String"
+       }
+    },
+    "Resources": {
+    "Ec2Instance" : {
+        "Type" : "AWS::EC2::Instance",
+        "Properties" : {
+          "ImageId" : { "Ref" : "ImageId" },
+          "InstanceType" : {"Ref" : "InstanceType"},
+          "NetworkInterfaces": [ {
+            "AssociatePublicIpAddress": "true",
+            "DeviceIndex": "0",
+            "GroupSet": [{ "Ref" : "SecurityGroupID" }],
+            "SubnetId": { "Ref" : "webSubnetID" }
+          } ],
+          "BlockDeviceMappings" : [
+            {
+               "DeviceName" : "/dev/sdm",
+               "Ebs" : {
+                 "VolumeType" : "gp2",
+                 "DeleteOnTermination" : "true",
+                 "VolumeSize" : "20"
+               }
+             }
+         ],
+         "DisableApiTermination" : "true"
+        }
+      },
+      "DynamoDBTable": {
+        "Type" : "AWS::DynamoDB::Table",
+        "Properties" : {
+            "TableName" : "csye6225",
+            "AttributeDefinitions" : [
+                {
+                    "AttributeName" : "id",
+                    "AttributeType" : "S"
+                }
+            ],
+            "KeySchema" : [
+                {
+                    "AttributeName" : "id",
+                    "KeyType" : "HASH"
+                }
+            ],
+            "ProvisionedThroughput" : {
+                "ReadCapacityUnits" : "5",
+                "WriteCapacityUnits" : "5"
+            }
+        }
+    }
+}
+}
