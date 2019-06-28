@@ -19,12 +19,19 @@ import com.neu.csye6225.webApplication.Utilities.AmazonUtil;
 import com.neu.csye6225.webApplication.service.BooksService;
 import org.springframework.web.multipart.MultipartFile;
 
-
-
 @RestController
 @CrossOrigin
 @RequestMapping("/api")
 public class BooksController {
+	
+	@Autowired
+	private AmazonClient amazonClient;
+
+	@Autowired
+	BooksController(AmazonClient amazonClient) {
+	    this.amazonClient = amazonClient;
+	}
+
 
 	@Autowired
 	private AmazonUtil amazonClient;
@@ -51,6 +58,7 @@ public class BooksController {
 	@GetMapping("/books/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public Books getBooks(@PathVariable String id) {
+//		if(booksService.getBooks(UUID.fromString(id)))
 		Optional<Books> singleBook = booksService.getBooks(UUID.fromString(id));
 		if (!singleBook.isPresent())
 			System.out.println("Catch this and display no such Books etc.");
@@ -63,7 +71,6 @@ public class BooksController {
 	public Books postBooks(@RequestBody Books postBooks) {
 		imagesService.update(postBooks.getImage());
 		return booksService.saveBooks(postBooks);
-
 	}
 
 	@DeleteMapping("/books/{id}")
