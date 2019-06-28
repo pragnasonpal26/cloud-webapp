@@ -117,7 +117,8 @@
            "DBInstanceIdentifier" : "csye6225-su19",
            "DBSecurityGroups" : [ {"Ref" : "RDSSecurityGroup"}],
            "PubliclyAccessible" : "true",
-           "DBSubnetGroupName" : { "Ref" : "DBSubnetGroup" }
+           "DBSubnetGroupName" : { "Ref" : "DBSubnetGroup" },
+           "Port" : "3306"
         }
     }
 }
