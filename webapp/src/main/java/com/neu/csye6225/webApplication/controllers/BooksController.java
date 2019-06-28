@@ -1,5 +1,7 @@
 package com.neu.csye6225.webApplication.controllers;
 
+import java.awt.*;
+import java.net.URL;
 import java.util.List;
 
 import java.util.Optional;
@@ -13,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.neu.csye6225.webApplication.entity.Books;
-import com.neu.csye6225.webApplication.service.AmazonClient;
+import com.neu.csye6225.webApplication.Utilities.AmazonUtil;
 import com.neu.csye6225.webApplication.service.BooksService;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,6 +30,15 @@ public class BooksController {
 	@Autowired
 	BooksController(AmazonClient amazonClient) {
 	    this.amazonClient = amazonClient;
+	}
+
+
+	@Autowired
+	private AmazonUtil amazonClient;
+
+	@Autowired
+	BooksController(AmazonUtil amazonClient) {
+		this.amazonClient = amazonClient;
 	}
 
 
@@ -60,7 +71,6 @@ public class BooksController {
 	public Books postBooks(@RequestBody Books postBooks) {
 		imagesService.update(postBooks.getImage());
 		return booksService.saveBooks(postBooks);
-		
 	}
 
 	@DeleteMapping("/books/{id}")
@@ -84,10 +94,10 @@ public class BooksController {
 
 	@GetMapping("/book/{idBook}/image/{idImage}")
 	@ResponseStatus(HttpStatus.OK)
-	public Images getCoverImage(@PathVariable String idBook, @PathVariable String idImage) {
+	public URL getCoverImage(@PathVariable String idBook, @PathVariable String idImage) {
 		Optional<Books> singleBook = booksService.getBooks(UUID.fromString(idBook));
 		Images image = singleBook.get().getImage();
-		return image;
+		return amazonClient.generatePreSignedURL(image.getUrl());
 	}
 
 	@PostMapping("/book/{idBook}/image")
@@ -95,8 +105,8 @@ public class BooksController {
 	public Images postImage(@RequestParam("file") MultipartFile file, @PathVariable String idBook) {
 		Optional<Books> singleBook = booksService.getBooks(UUID.fromString(idBook));
 		Images image = singleBook.get().getImage();
-		amazonClient.uploadFile(file);
-		imagesService.storeFile(file,image);
+		image.setUrl(amazonClient.uploadFile(file));
+		imagesService.update(image);
 		return image;
 	}
 
@@ -105,9 +115,8 @@ public class BooksController {
 		Books singleBook = booksService.getBooks(UUID.fromString(idBook)).get();
 		Images image = singleBook.getImage();
 		amazonClient.deleteFileFromS3Bucket(image.getUrl());
-		amazonClient.uploadFile(file);
-		imagesService.deleteFile(image.getUrl());
-		imagesService.storeFile(file,image);
+		image.setUrl(amazonClient.uploadFile(file));
+		imagesService.update(image);
 		return image;
 	}
 
@@ -115,11 +124,10 @@ public class BooksController {
 	public ResponseEntity<String> deleteImage(@PathVariable String idImage, @PathVariable String idBook) {
 		Books singleBook = booksService.getBooks(UUID.fromString(idBook)).get();
 		Images image = singleBook.getImage();
-		imagesService.deleteFile(image.getUrl());
 		amazonClient.deleteFileFromS3Bucket(image.getUrl());
 		singleBook.setImage(null);
 		booksService.update(singleBook);
-		imagesService.deleteImages(UUID.fromString(idImage));
+		//imagesService.deleteImages(UUID.fromString(idImage));
 		return new ResponseEntity("Deleted successfully!", HttpStatus.OK);
 	}
 
