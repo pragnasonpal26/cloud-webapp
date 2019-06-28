@@ -27,7 +27,7 @@ public class BookControllerServiceTest extends AbstractTest {
    }
    @Test
    public void getBooks() throws Exception {
-      String uri = "/books";
+      String uri = "api/books";
       MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
          .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
       
@@ -40,7 +40,7 @@ public class BookControllerServiceTest extends AbstractTest {
    
    @Test
    public void postBooks() throws Exception {
-      String uri = "/books";
+      String uri = "api/books";
       List<Books> books = booksService.getBooks();
       String inputJson = super.mapToJson(books);
       MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri)
@@ -54,7 +54,7 @@ public class BookControllerServiceTest extends AbstractTest {
    }
    @Test
    public void updateBook() throws Exception {
-      String uri = "/books";
+      String uri = "api/books";
       Book book = new Book();
       String inputJson = super.mapToJson(book);
       MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri)
@@ -67,8 +67,8 @@ public class BookControllerServiceTest extends AbstractTest {
       assertEquals(content, "Book is updated successsfully");
    }
    @Test
-   public void deleteBooks() throws Exception {
-      String uri = "/books/delete/{id}";
+   public void deleteBooks(String id) throws Exception {
+      String uri = "api/books/{id}";
       MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.delete(uri)).andReturn();
       int status = mvcResult.getResponse().getStatus();
       assertEquals(200, status);

@@ -37,7 +37,13 @@
               "AssignIpv6AddressOnCreation" : true,
               "CidrBlock" : { "Fn::Select" : [ 0, { "Fn::Cidr" : [{ "Fn::GetAtt" : [ "myVPC", "CidrBlock" ]}, 3, 8 ]}]},
               "Ipv6CidrBlock" : { "Fn::Select" : [ 0, { "Fn::Cidr" : [{ "Fn::Select" : [ 0, { "Fn::GetAtt" : [ "myVPC", "Ipv6CidrBlocks" ]}]}, 3, 64 ]}]},
-              "VpcId" : { "Ref" : "myVPC" }
+              "VpcId" : { "Ref" : "myVPC" },
+              "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": {"Fn::Join": ["",[{"Ref": "AWS::StackName"},"-csye6225-subnet1"]]}
+                }
+                ]
             }
           },
           "subnet2" : {
@@ -48,7 +54,13 @@
               "AssignIpv6AddressOnCreation" : true,
               "CidrBlock" : { "Fn::Select" : [ 1, { "Fn::Cidr" : [{ "Fn::GetAtt" : [ "myVPC", "CidrBlock" ]}, 3, 8 ]}]},
               "Ipv6CidrBlock" : { "Fn::Select" : [ 1, { "Fn::Cidr" : [{ "Fn::Select" : [ 0, { "Fn::GetAtt" : [ "myVPC", "Ipv6CidrBlocks" ]}]}, 3, 64 ]}]},
-              "VpcId" : { "Ref" : "myVPC" }
+              "VpcId" : { "Ref" : "myVPC" },
+               "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": {"Fn::Join": ["",[{"Ref": "AWS::StackName"},"-csye6225-subnet2"]]}
+                }
+                ]
             }
           },
           "subnet3" : {
@@ -59,13 +71,24 @@
               "AssignIpv6AddressOnCreation" : true,
               "CidrBlock" : { "Fn::Select" : [ 2, { "Fn::Cidr" : [{ "Fn::GetAtt" : [ "myVPC", "CidrBlock" ]}, 3, 8 ]}]},
               "Ipv6CidrBlock" : { "Fn::Select" : [ 2, { "Fn::Cidr" : [{ "Fn::Select" : [ 0, { "Fn::GetAtt" : [ "myVPC", "Ipv6CidrBlocks" ]}]}, 3, 64 ]}]},
-              "VpcId" : { "Ref" : "myVPC" }
+              "VpcId" : { "Ref" : "myVPC" },
+               "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": {"Fn::Join": ["",[{"Ref": "AWS::StackName"},"-csye6225-subnet3"]]}
+                }
+                ]
             }
           },
           "myInternetGateway" : {
             "Type" : "AWS::EC2::InternetGateway",
             "Properties" : {
-              "Tags" : [ {"Key" : "key1", "Value" : "value1"}]
+              "Tags": [
+                {
+                  "Key": "Name",
+                  "Value": {"Fn::Join": ["",[{"Ref": "AWS::StackName"},"-csye6225-internetGateway"]]}
+                }
+              ]
             }
          },
          "AttachGateway" : {
@@ -115,7 +138,46 @@
                "SubnetId" : { "Ref" : "subnet3" },
                "RouteTableId" : { "Ref" : "myRouteTable" }
             }
-         }
+         },
+          "webAppSecurityGroup": {
+          "Type": "AWS::EC2::SecurityGroup",
+          "Properties": {
+              "GroupDescription": "security group for ec2",
+              "VpcId" : { "Ref" : "myVPC" },
+              "SecurityGroupIngress": [
+                  {
+                      "IpProtocol": "tcp",
+                      "FromPort": "80",
+                      "ToPort": "80",
+                      "CidrIp": "0.0.0.0/0"
+                  },
+                  {
+                      "IpProtocol": "tcp",
+                      "FromPort": "22",
+                      "ToPort": "22",
+                      "CidrIp": "0.0.0.0/0"
+                  },
+                  {
+                      "IpProtocol": "tcp",
+                      "FromPort": "443",
+                      "ToPort": "443",
+                      "CidrIp": "0.0.0.0/0"
+                  },
+                  {
+                      "IpProtocol": "tcp",
+                      "FromPort": "8080",
+                      "ToPort": "8080",
+                      "CidrIp": "0.0.0.0/0"
+                  }
+              ],
+              "Tags": [
+                  {
+                      "Key": "Name",
+                      "Value": "csye6225-webapps-sg"
+                  }
+              ]
+          }
+      }
     },
     "Outputs": {
         "CidrBlock": {
