@@ -177,32 +177,6 @@
                   }
               ]
           }
-      },
-      "RDSSecurityGroup":{
-          "Type": "AWS::EC2::SecurityGroup",
-          "Properties": {
-              "GroupDescription": "security group for RDS instances",
-              "VpcId" : { "Ref" : "myVPC" },
-              "SecurityGroupIngress": [
-                  {
-                      "IpProtocol": "tcp",
-                      "FromPort": "3306",
-                      "ToPort": "3306",
-                      "SourceSecurityGroupId": {
-                        "Fn::GetAtt": [
-                           "webAppSecurityGroup",
-                           "GroupId"
-                        ]
-                     }
-                  }
-              ],
-              "Tags": [
-                  {
-                      "Key": "Name",
-                      "Value": "csye6225-rds-sg"
-                  }
-              ]
-          }
       }
     },
     "Outputs": {
