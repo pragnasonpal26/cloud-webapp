@@ -6,6 +6,9 @@
         "stackName":{
             "Type":"String"
         },
+        "KeyName":{
+            "Type":"String"
+        },
         "ImageId":{
             "Type":"String"
         },
@@ -60,6 +63,7 @@
         "Type" : "AWS::EC2::Instance",
         "Properties" : {
           "ImageId" : { "Ref" : "ImageId" },
+          "KeyName" : { "Ref" : "KeyName" },
           "InstanceType" : {"Ref" : "InstanceType"},
           "NetworkInterfaces": [ {
             "AssociatePublicIpAddress": "true",
@@ -117,8 +121,7 @@
            "DBInstanceIdentifier" : "csye6225-su19",
            "DBSecurityGroups" : [ {"Ref" : "RDSSecurityGroup"}],
            "PubliclyAccessible" : "true",
-           "DBSubnetGroupName" : { "Ref" : "DBSubnetGroup" },
-           "Port" : "3306"
+           "DBSubnetGroupName" : { "Ref" : "DBSubnetGroup" }
         }
     }
 }

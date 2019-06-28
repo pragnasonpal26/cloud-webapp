@@ -1,6 +1,9 @@
 echo "Input the new application stack name"
 read name
 
+echo "Input ssh key name"
+read keyName
+
 echo "Input network stack name"
 read stackname
 
@@ -19,4 +22,4 @@ dbSubnetID=`aws ec2 describe-tags --filters "Name=value,Values=$dbsubnetname" --
 GROUPID=`aws ec2 describe-tags --filters "Name=value,Values=$groupname" --query 'Tags[0].ResourceId' --output text`
 #RDSGROUPID=`aws ec2 describe-tags --filters "Name=value,Values=$rdsgroupname" --query 'Tags[0].ResourceId' --output text`
 InstanceType='t2.micro'
-aws cloudformation create-stack --stack-name $name --capabilities CAPABILITY_NAMED_IAM --template-body file://csye6225-cf-application.json --parameters "ParameterKey=stackName,ParameterValue=$name" "ParameterKey=ImageId,ParameterValue=$amiID" "ParameterKey=InstanceType,ParameterValue=$InstanceType" "ParameterKey=VPCID,ParameterValue=$VPCID" "ParameterKey=webAppSubnetID,ParameterValue=$webAppSubnetID" "ParameterKey=dbSubnetID,ParameterValue=$dbSubnetID" "ParameterKey=SecurityGroupID,ParameterValue=$GROUPID"
+aws cloudformation create-stack --stack-name $name --capabilities CAPABILITY_NAMED_IAM --template-body file://csye6225-cf-application.json --parameters "ParameterKey=stackName,ParameterValue=$name" "ParameterKey=KeyName,ParameterValue=$keyName" "ParameterKey=ImageId,ParameterValue=$amiID" "ParameterKey=InstanceType,ParameterValue=$InstanceType" "ParameterKey=VPCID,ParameterValue=$VPCID" "ParameterKey=webAppSubnetID,ParameterValue=$webAppSubnetID" "ParameterKey=dbSubnetID,ParameterValue=$dbSubnetID" "ParameterKey=SecurityGroupID,ParameterValue=$GROUPID"
