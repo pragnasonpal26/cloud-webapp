@@ -1,6 +1,7 @@
 package com.neu.csye6225.webApplication.controllers;
 
 import java.util.List;
+
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,14 +13,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.neu.csye6225.webApplication.entity.Books;
+import com.neu.csye6225.webApplication.service.AmazonClient;
 import com.neu.csye6225.webApplication.service.BooksService;
 import org.springframework.web.multipart.MultipartFile;
-
 
 @RestController
 @CrossOrigin
 @RequestMapping("/api")
 public class BooksController {
+	
+	@Autowired
+	private AmazonClient amazonClient;
+
+	@Autowired
+	BooksController(AmazonClient amazonClient) {
+	    this.amazonClient = amazonClient;
+	}
+
 
 	@Autowired
 	private BooksService booksService;
@@ -37,6 +47,7 @@ public class BooksController {
 	@GetMapping("/books/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public Books getBooks(@PathVariable String id) {
+//		if(booksService.getBooks(UUID.fromString(id)))
 		Optional<Books> singleBook = booksService.getBooks(UUID.fromString(id));
 		if (!singleBook.isPresent())
 			System.out.println("Catch this and display no such Books etc.");
@@ -49,6 +60,7 @@ public class BooksController {
 	public Books postBooks(@RequestBody Books postBooks) {
 		imagesService.update(postBooks.getImage());
 		return booksService.saveBooks(postBooks);
+		
 	}
 
 	@DeleteMapping("/books/{id}")
@@ -83,6 +95,7 @@ public class BooksController {
 	public Images postImage(@RequestParam("file") MultipartFile file, @PathVariable String idBook) {
 		Optional<Books> singleBook = booksService.getBooks(UUID.fromString(idBook));
 		Images image = singleBook.get().getImage();
+		amazonClient.uploadFile(file);
 		imagesService.storeFile(file,image);
 		return image;
 	}
@@ -91,6 +104,8 @@ public class BooksController {
 	public Images updateImage(@PathVariable String idBook, @PathVariable String idImage, @RequestParam("file") MultipartFile file) {
 		Books singleBook = booksService.getBooks(UUID.fromString(idBook)).get();
 		Images image = singleBook.getImage();
+		amazonClient.deleteFileFromS3Bucket(image.getUrl());
+		amazonClient.uploadFile(file);
 		imagesService.deleteFile(image.getUrl());
 		imagesService.storeFile(file,image);
 		return image;
@@ -101,6 +116,7 @@ public class BooksController {
 		Books singleBook = booksService.getBooks(UUID.fromString(idBook)).get();
 		Images image = singleBook.getImage();
 		imagesService.deleteFile(image.getUrl());
+		amazonClient.deleteFileFromS3Bucket(image.getUrl());
 		singleBook.setImage(null);
 		booksService.update(singleBook);
 		imagesService.deleteImages(UUID.fromString(idImage));
