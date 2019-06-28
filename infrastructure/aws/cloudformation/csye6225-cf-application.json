@@ -1,0 +1,128 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Cloud Formation template for application stack creation - csye6225 summer 19",
+
+    "Parameters" : {
+        "stackName":{
+            "Type":"String"
+        },
+        "KeyName":{
+            "Type":"String"
+        },
+        "ImageId":{
+            "Type":"String"
+        },
+        "InstanceType":{
+            "Type":"String"
+        },
+        "VPCID":{
+            "Type":"String"
+        },
+        "webAppSubnetID" : {
+            "Type" : "String"
+        },
+        "dbSubnetID" : {
+            "Type" : "String"
+        },
+        "SecurityGroupID" : {
+            "Type" : "String"
+       }
+    },
+    "Resources": {
+    "DBSubnetGroup":{
+            "Type":"AWS::RDS::DBSubnetGroup",
+            "Properties":{
+               "DBSubnetGroupDescription":"description",
+               "SubnetIds":[
+                  {
+                     "Ref":"webAppSubnetID"
+                  },
+                  {
+                     "Ref":"dbSubnetID"
+                  }
+               ]
+            }
+    },
+    "RDSSecurityGroup":{
+        "Type": "AWS::RDS::DBSecurityGroup",
+        "Properties": {
+            "GroupDescription" : "security group for rds",
+            "DBSecurityGroupIngress": {
+                "EC2SecurityGroupId": { "Ref": "SecurityGroupID" }
+            },
+            "EC2VpcId" : { "Ref" : "VPCID" },
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "csye6225-rds"
+                }
+            ]
+        }
+    },
+    "Ec2Instance" : {
+        "Type" : "AWS::EC2::Instance",
+        "Properties" : {
+          "ImageId" : { "Ref" : "ImageId" },
+          "KeyName" : { "Ref" : "KeyName" },
+          "InstanceType" : {"Ref" : "InstanceType"},
+          "NetworkInterfaces": [ {
+            "AssociatePublicIpAddress": "true",
+            "DeviceIndex": "0",
+            "GroupSet": [{ "Ref" : "SecurityGroupID" }],
+            "SubnetId": { "Ref" : "webAppSubnetID" }
+          } ],
+          "BlockDeviceMappings" : [
+            {
+               "DeviceName" : "/dev/sdm",
+               "Ebs" : {
+                 "VolumeType" : "gp2",
+                 "DeleteOnTermination" : "true",
+                 "VolumeSize" : "20"
+               }
+             }
+         ],
+         "DisableApiTermination" : "true"
+        }
+      },
+      "DynamoDBTable": {
+        "Type" : "AWS::DynamoDB::Table",
+        "Properties" : {
+            "TableName" : "csye6225",
+            "AttributeDefinitions" : [
+                {
+                    "AttributeName" : "id",
+                    "AttributeType" : "S"
+                }
+            ],
+            "KeySchema" : [
+                {
+                    "AttributeName" : "id",
+                    "KeyType" : "HASH"
+                }
+            ],
+            "ProvisionedThroughput" : {
+                "ReadCapacityUnits" : "5",
+                "WriteCapacityUnits" : "5"
+            }
+        }
+    },
+    "RDSIntance" : {
+        "Type" : "AWS::RDS::DBInstance",
+        "Properties" : {
+           "DBName" : "csye6225",
+           "DBInstanceClass" : "db.t2.medium",
+           "AllocatedStorage": "20",
+           "MultiAZ" : "false",
+           "Engine" : "MySQL",
+           "EngineVersion" : "5.6.37",
+           "StorageType" : "gp2",
+           "MasterUsername" : "csye6225master",
+           "MasterUserPassword" :"csye6225password",
+           "DBInstanceIdentifier" : "csye6225-su19",
+           "DBSecurityGroups" : [ {"Ref" : "RDSSecurityGroup"}],
+           "PubliclyAccessible" : "true",
+           "DBSubnetGroupName" : { "Ref" : "DBSubnetGroup" }
+        }
+    }
+}
+}
