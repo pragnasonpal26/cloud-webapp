@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.neu.csye6225.webApplication.entity.Images;
+import com.neu.csye6225.webApplication.service.AmazonClient;
 import com.neu.csye6225.webApplication.service.ImagesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,22 +26,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class BooksController {
 	
 	@Autowired
-	private AmazonClient amazonClient;
-
-	@Autowired
-	BooksController(AmazonClient amazonClient) {
-	    this.amazonClient = amazonClient;
-	}
-
-
-	@Autowired
 	private AmazonUtil amazonClient;
 
 	@Autowired
 	BooksController(AmazonUtil amazonClient) {
-		this.amazonClient = amazonClient;
+	    this.amazonClient = amazonClient;
 	}
-
 
 	@Autowired
 	private BooksService booksService;
