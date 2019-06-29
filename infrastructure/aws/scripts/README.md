@@ -4,7 +4,7 @@
 
 ### Prerequisites:
 
-Install Python, pip, and the AWS Command Line Interface on Linux
+Install Python, pip and the AWS Command Line Interface on Linux
 
 After the AWS CLI is installed, configured aws credentials of specific account
 
