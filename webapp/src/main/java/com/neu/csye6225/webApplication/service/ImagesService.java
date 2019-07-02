@@ -1,9 +1,12 @@
 package com.neu.csye6225.webApplication.service;
 
+import com.neu.csye6225.webApplication.Utilities.AmazonUtil;
 import com.neu.csye6225.webApplication.entity.Images;
 import com.neu.csye6225.webApplication.exception.FileStorageException;
 import com.neu.csye6225.webApplication.repository.ImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -17,8 +20,18 @@ import java.util.UUID;
 
 @Service
 public class ImagesService {
+
+    @Autowired
+    private Environment env;
+
+    @Autowired
+    private AmazonUtil amazonClient;
+
     @Autowired
     private ImageRepository imageRepository;
+
+    @Value("${localImagePath}")
+    private String localImagePath;
 
     @Transactional
     public List<Images> getImages() {
@@ -40,7 +53,7 @@ public class ImagesService {
         imageRepository.save(images);
     }
 
-    public void storeFile(MultipartFile file, Images image) {
+    public Images upload(MultipartFile file, Images image) {
         ArrayList<String> acceptedTypes = new ArrayList<String>();
         acceptedTypes.add("image/png");
         acceptedTypes.add("image/jpg");
@@ -48,32 +61,23 @@ public class ImagesService {
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         String fileType = file.getContentType();
-        System.out.println(fileType);
-        try {
-            if(fileName.contains(".."))
-                throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
-            if(!acceptedTypes.contains(fileType))
-                throw new FileStorageException("Invalid file type " + fileType);
+        if(fileName.contains(".."))
+            throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
+        if(!acceptedTypes.contains(fileType))
+            throw new FileStorageException("Invalid file type " + fileType);
 
-            File oldFile = new File(image.getUrl());
-            String newFilePath = oldFile.getParent() +  "/" + file.getOriginalFilename();
+        String url = "";
+        System.out.println(env.getActiveProfiles()[0]);
 
-            InputStream inputStream = file.getInputStream();
+        if(env.getActiveProfiles()[0].equals("local"))
+            url = storeLocal(file);
+        else
+            url = amazonClient.uploadFile(file);
 
-            File newFile = new File(newFilePath);
-            OutputStream outputStream = new FileOutputStream(newFile);
-            int read = 0;
-            byte[] bytes = new byte[1024];
-
-            System.out.println("Writing file");
-            while ((read = inputStream.read(bytes)) != -1) {
-                outputStream.write(bytes, 0, read);
-            }
-            image.setUrl(newFilePath);
-            update(image);
-        } catch (IOException ex) {
-            throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
-        }
+        System.out.println(url);
+        image.setUrl(url);
+        update(image);
+        return image;
     }
 
     public void deleteFile(String path) {
@@ -85,5 +89,29 @@ public class ImagesService {
     @Transactional
     public void deleteImages(UUID fromString) {
         imageRepository.deleteById(fromString);
+    }
+
+    private String storeLocal(MultipartFile file){
+        String filePath;
+        try{
+            filePath = localImagePath + file.getOriginalFilename();
+
+            System.out.println(filePath);
+
+            InputStream inputStream = file.getInputStream();
+
+            File newFile = new File(filePath);
+            OutputStream outputStream = new FileOutputStream(newFile);
+            int read = 0;
+            byte[] bytes = new byte[1024];
+
+            System.out.println("Writing file");
+            while ((read = inputStream.read(bytes)) != -1) {
+                outputStream.write(bytes, 0, read);
+            }
+        }catch (IOException ex) {
+            throw new FileStorageException("Could not store file " + file.getOriginalFilename() + ". Please try again!", ex);
+        }
+        return filePath;
     }
 }

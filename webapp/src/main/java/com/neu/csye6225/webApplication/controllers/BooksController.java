@@ -1,6 +1,5 @@
 package com.neu.csye6225.webApplication.controllers;
 
-import java.awt.*;
 import java.net.URL;
 import java.util.List;
 
@@ -8,9 +7,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.neu.csye6225.webApplication.entity.Images;
-import com.neu.csye6225.webApplication.service.AmazonClient;
 import com.neu.csye6225.webApplication.service.ImagesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -79,10 +78,6 @@ public class BooksController {
 		return new ResponseEntity<>(postBook, HttpStatus.NO_CONTENT);
 	}
 
-	@PostMapping
-	@ResponseStatus(HttpStatus.CREATED)
-	public Images createImage(@RequestBody Images image){return imagesService.saveImage(image);}
-
 	@GetMapping("/book/{idBook}/image/{idImage}")
 	@ResponseStatus(HttpStatus.OK)
 	public URL getCoverImage(@PathVariable String idBook, @PathVariable String idImage) {
@@ -96,9 +91,8 @@ public class BooksController {
 	public Images postImage(@RequestParam("file") MultipartFile file, @PathVariable String idBook) {
 		Optional<Books> singleBook = booksService.getBooks(UUID.fromString(idBook));
 		Images image = singleBook.get().getImage();
-		image.setUrl(amazonClient.uploadFile(file));
-		imagesService.update(image);
-		return image;
+		Images img = imagesService.upload(file,image);
+		return img;
 	}
 
 	@PutMapping("/book/{idBook}/image/{idImage}")
