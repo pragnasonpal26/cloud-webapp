@@ -13,6 +13,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -80,15 +82,41 @@ public class ImagesService {
         return image;
     }
 
-    public void deleteFile(String path) {
-        System.out.println(path);
-        File fileToDelete = new File(path);
-        fileToDelete.delete();
+    public void delete(Images image) {
+        if(env.getActiveProfiles()[0].equals("local")){
+            File fileToDelete = new File(image.getUrl());
+            fileToDelete.delete();
+        }
+        else
+            amazonClient.deleteFileFromS3Bucket(image.getUrl());
     }
 
     @Transactional
     public void deleteImages(UUID fromString) {
         imageRepository.deleteById(fromString);
+    }
+
+    public String updateImage(MultipartFile newFile, Images image){
+        String newUrl = "";
+        if(env.getActiveProfiles()[0].equals("local")){
+            File fileToDelete = new File(image.getUrl());
+            fileToDelete.delete();
+            newUrl = storeLocal(newFile);
+        }
+        else{
+            amazonClient.deleteFileFromS3Bucket(image.getUrl());
+            newUrl = amazonClient.uploadFile(newFile);
+        }
+        return newUrl;
+    }
+
+    public String getImageUrl(Images image){
+        String url = null;
+        if(image.getUrl().contains("http"))
+            url = amazonClient.generatePreSignedURL(image.getUrl()).toString();
+        else
+            url = image.getUrl();
+        return url;
     }
 
     private String storeLocal(MultipartFile file){

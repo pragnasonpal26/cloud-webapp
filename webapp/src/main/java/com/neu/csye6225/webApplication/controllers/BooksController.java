@@ -80,10 +80,10 @@ public class BooksController {
 
 	@GetMapping("/book/{idBook}/image/{idImage}")
 	@ResponseStatus(HttpStatus.OK)
-	public URL getCoverImage(@PathVariable String idBook, @PathVariable String idImage) {
+	public String getCoverImage(@PathVariable String idBook, @PathVariable String idImage) {
 		Optional<Books> singleBook = booksService.getBooks(UUID.fromString(idBook));
 		Images image = singleBook.get().getImage();
-		return amazonClient.generatePreSignedURL(image.getUrl());
+		return imagesService.getImageUrl(image);
 	}
 
 	@PostMapping("/book/{idBook}/image")
@@ -99,8 +99,7 @@ public class BooksController {
 	public Images updateImage(@PathVariable String idBook, @PathVariable String idImage, @RequestParam("file") MultipartFile file) {
 		Books singleBook = booksService.getBooks(UUID.fromString(idBook)).get();
 		Images image = singleBook.getImage();
-		amazonClient.deleteFileFromS3Bucket(image.getUrl());
-		image.setUrl(amazonClient.uploadFile(file));
+		image.setUrl(imagesService.updateImage(file,image));
 		imagesService.update(image);
 		return image;
 	}
@@ -109,10 +108,10 @@ public class BooksController {
 	public ResponseEntity<String> deleteImage(@PathVariable String idImage, @PathVariable String idBook) {
 		Books singleBook = booksService.getBooks(UUID.fromString(idBook)).get();
 		Images image = singleBook.getImage();
-		amazonClient.deleteFileFromS3Bucket(image.getUrl());
+		imagesService.delete(image);
 		singleBook.setImage(null);
 		booksService.update(singleBook);
-		//imagesService.deleteImages(UUID.fromString(idImage));
+		imagesService.deleteImages(UUID.fromString(idImage));
 		return new ResponseEntity("Deleted successfully!", HttpStatus.OK);
 	}
 
