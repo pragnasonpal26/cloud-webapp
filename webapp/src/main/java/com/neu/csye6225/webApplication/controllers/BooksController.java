@@ -89,10 +89,12 @@ public class BooksController {
 	@PostMapping("/book/{idBook}/image")
 	@ResponseStatus(HttpStatus.OK)
 	public Images postImage(@RequestParam("file") MultipartFile file, @PathVariable String idBook) {
-		Optional<Books> singleBook = booksService.getBooks(UUID.fromString(idBook));
-		Images image = singleBook.get().getImage();
-		Images img = imagesService.upload(file,image);
-		return img;
+		Books singleBook = booksService.getBooks(UUID.fromString(idBook)).get();
+		Images image = new Images();
+		image.setUrl(imagesService.upload(file,image));
+		singleBook.setImage(image);
+		booksService.update(singleBook);
+		return image;
 	}
 
 	@PutMapping("/book/{idBook}/image/{idImage}")

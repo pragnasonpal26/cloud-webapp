@@ -56,7 +56,7 @@ public class ImagesService {
             imageRepository.save(images);
     }
 
-    public Images upload(MultipartFile file, Images image) {
+    public String upload(MultipartFile file, Images image) {
         ArrayList<String> acceptedTypes = new ArrayList<String>();
         acceptedTypes.add("image/png");
         acceptedTypes.add("image/jpg");
@@ -80,7 +80,7 @@ public class ImagesService {
         System.out.println(url);
         image.setUrl(url);
         update(image);
-        return image;
+        return url;
     }
 
     public void delete(Images image) {
