@@ -16,7 +16,7 @@ public class Books implements Serializable{
 	@GeneratedValue(generator = "uuid", strategy = GenerationType.AUTO)
 	@Type(type = "uuid-char")
 	private UUID id;
-	
+
 	@NotNull
 	@Size(min=3, max=100)
 	@Column(name = "title")

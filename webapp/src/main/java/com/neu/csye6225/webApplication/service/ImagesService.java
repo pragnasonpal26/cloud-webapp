@@ -52,7 +52,8 @@ public class ImagesService {
 
     @Transactional
     public void update(Images images) {
-        imageRepository.save(images);
+        if(images != null)
+            imageRepository.save(images);
     }
 
     public Images upload(MultipartFile file, Images image) {
