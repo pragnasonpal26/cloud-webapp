@@ -35,14 +35,11 @@ jobs:
       - run:
           name: Install python and pip
           command: |
-            sudo apt-get install python3 -y
+            apt-get -y -qq update
+            apt-get -y -qq install python3.4-dev
             curl -O https://bootstrap.pypa.io/get-pip.py
-            python3 get-pip.py --user
-            ls -a ~
-            export PATH=~/.local/bin:$PATH
-            #source ~/.bash_profile
-            pip3 --version
-            pip3 install awscli --upgrade --user
+            python3.4 get-pip.py --user
+            pip install awscli --upgrade --user
             aws --version
       - run:
           name: Upload Artifact to S3
