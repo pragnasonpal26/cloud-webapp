@@ -15,7 +15,7 @@ jobs:
             cd ../../..
       - run:
           name: Zip Artifact
-          command: |
+          command:
             echo "Hello current build number is ${CIRCLE_BUILD_NUM}"
             pwd
             ls -al
