@@ -15,7 +15,7 @@ jobs:
             cd ../../..
       - run:
           name: Zip Artifact
-          command:
+          command: |
             echo "Hello current build number is ${CIRCLE_BUILD_NUM}"
             pwd
             ls -al
@@ -34,7 +34,7 @@ jobs:
             ls -al
       -run:
         name: Install python and pip
-        command:
+        command: |
           sudo apt-get install python3 -y
           curl -O https://bootstrap.pypa.io/get-pip.py
           python3 get-pip.py --user
