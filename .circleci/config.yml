@@ -33,6 +33,18 @@ jobs:
             pwd
             ls -al
       - run:
+        name: Install python and pip
+        command: |
+          sudo apt-get install python3 -y
+          curl -O https://bootstrap.pypa.io/get-pip.py
+          python3 get-pip.py --user
+          ls -a ~
+          export PATH=~/.local/bin:$PATH
+          source ~/.bash_profile
+          pip3 --version
+          pip3 install awscli --upgrade --user -y
+          aws --version
+      - run:
           name: Upload Artifact to S3
           command: |
             aws s3 sync csye6225-web-app-${CIRCLE_BUILD_NUM}.zip s3://app-jar-ec2
