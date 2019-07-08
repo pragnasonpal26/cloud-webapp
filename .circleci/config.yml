@@ -42,7 +42,7 @@ jobs:
             export PATH=~/.local/bin:$PATH
             #source ~/.bash_profile
             pip3 --version
-            pip3 install awscli --upgrade --user -y
+            pip3 install awscli --upgrade --user
             aws --version
       - run:
           name: Upload Artifact to S3
