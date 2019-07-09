@@ -33,14 +33,6 @@ jobs:
             pwd
             ls -al
       - run:
-          name: Install python and pip
-          command: |
-            sudo apt-get install python3
-            python3 --version
-            sudo apt update
-            sudo apt install -y python-pip python-dev
-
-      - run:
           name: Install awscli
           command: |
             sudo apt-get update
@@ -49,7 +41,7 @@ jobs:
       - run:
           name: Deploy
           command: |
-            aws s3 sync csye6225-web-app-${CIRCLE_BUILD_NUM}.zip s3://app-jar-ec2
+            aws s3 sync /home/circleci/project/csye6225-web-app-${CIRCLE_BUILD_NUM}.zip s3://app-jar-ec2
       - run:
           name: Make CodeDeploy API call
           command: |
