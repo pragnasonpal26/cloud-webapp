@@ -32,15 +32,14 @@ jobs:
             cd ..
             pwd
             ls -al
+  deploy:
+    docker:
+      - image: circleci/python:3.7-stretch
+    working_directory: ~/circleci-docs
+    steps:
       - run:
-          name: Install python and pip
-          command: |
-            sudo apt-get -y -qq update
-            sudo apt-get -y -qq install python3.4-dev
-            curl -O https://bootstrap.pypa.io/get-pip.py
-            python3.4 get-pip.py --user
-            pip install awscli --upgrade --user
-            aws --version
+          name: Install awscli
+          command: sudo pip install awscli
       - run:
           name: Upload Artifact to S3
           command: |
