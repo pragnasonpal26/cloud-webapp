@@ -3,6 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/openjdk:8-jdk
+    working_directory: ~/circle-tmp-folder
     steps:
       - checkout
       - run:
@@ -32,18 +33,13 @@ jobs:
             cd ..
             pwd
             ls -al
-      - run:
-          name: Install pip
-          command: sudo pip install awscli
-    docker:
-      - image: circleci/python:2.7-jessie
+  deploy:
+    machine:
+      enabled: true
+    working_directory: ~/circle-tmp-folder
     steps:
-      - checkout
-      - run:
-          name: Install awscli
-          command: sudo pip install awscli
-      - run:
-          name: Upload Artifact to S3
+       - run:
+          name: Deploy
           command: |
             aws s3 sync csye6225-web-app-${CIRCLE_BUILD_NUM}.zip s3://app-jar-ec2
       - run:
