@@ -3,8 +3,6 @@ jobs:
   build:
     docker:
       - image: circleci/openjdk:8-jdk
-      - image: circleci/python:2.7-jessie
-    working_directory: ~/circle-tmp-folder
     steps:
       - checkout
       - run:
@@ -34,6 +32,12 @@ jobs:
             cd ..
             pwd
             ls -al
+workflows:
+version: 2
+  build:
+    docker:
+      - image: circleci/python:2.7-jessie
+    steps:
       - run:
           name: Install awscli
           command: sudo pip install awscli localhost
