@@ -32,15 +32,20 @@ jobs:
             cd ..
             pwd
             ls -al
-workflows:
-  version: 2
-  build:
-    docker:
-      - image: circleci/python:2.7-jessie
-    steps:
+      - run:
+          name: Install python and pip
+          command: |
+            sudo apt-get install python3
+            python3 --version
+            curl -O https://bootstrap.pypa.io/get-pip.py
+            python3 get-pip.py --user
+            pip3 --version
+
       - run:
           name: Install awscli
-          command: sudo pip install awscli localhost
+          command: |
+          sudo pip3 install awscli --upgrade --user
+          aws --version
       - run:
           name: Deploy
           command: |
