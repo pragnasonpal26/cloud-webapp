@@ -38,7 +38,7 @@ jobs:
       enabled: true
     working_directory: ~/circle-tmp-folder
     steps:
-       - run:
+      - run:
           name: Deploy
           command: |
             aws s3 sync csye6225-web-app-${CIRCLE_BUILD_NUM}.zip s3://app-jar-ec2
