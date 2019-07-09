@@ -39,7 +39,6 @@ jobs:
             python3 --version
             curl -O https://bootstrap.pypa.io/get-pip.py
             python3 get-pip.py --user
-            pip --version
 
       - run:
           name: Install awscli
