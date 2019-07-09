@@ -33,7 +33,7 @@ jobs:
             pwd
             ls -al
 workflows:
-version: 2
+  version: 2
   build:
     docker:
       - image: circleci/python:2.7-jessie
