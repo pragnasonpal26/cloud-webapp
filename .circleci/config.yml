@@ -33,6 +33,13 @@ jobs:
             pwd
             ls -al
       - run:
+          name: Install pip
+          command: sudo pip install awscli
+    docker:
+      - image: image: circleci/python:2.7-jessie
+    steps:
+      - checkout
+      - run:
           name: Install awscli
           command: sudo pip install awscli
       - run:
