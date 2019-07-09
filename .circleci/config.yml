@@ -45,7 +45,7 @@ jobs:
             ls
             cd codedeploy_artifact
             ls
-            AWS_ACCESS_KEY_ID =  ${AWS_ACCESS_KEY} AWS_SECRET_ACCESS_KEY = ${AWS_SECRET_KEY} aws s3 sync /home/circleci/project/codedeploy_artifact/csye6225-web-app-${CIRCLE_BUILD_NUM}.zip s3://app-jar-ec2 --${AWS_REGION}
+            aws s3 sync /home/circleci/project/codedeploy_artifact/csye6225-web-app-${CIRCLE_BUILD_NUM}.zip s3://app-jar-ec2 --region ${AWS_REGION}
       - run:
           name: Make CodeDeploy API call
           command: |
