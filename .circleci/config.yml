@@ -43,7 +43,9 @@ jobs:
           command: |
             pwd
             ls
-            aws s3 sync /home/circleci/project/codedeploy_artifact/csye6225-web-app-${CIRCLE_BUILD_NUM}.zip s3://app-jar-ec2
+            cd codedeploy_artifact
+            ls
+            aws s3 sync /home/circleci/project/codedeploy_artifact/csye6225-web-app-${CIRCLE_BUILD_NUM}.zip s3://app-jar-ec2 --${AWS_ACCESS_KEY} --${AWS_SECRET_KEY} --${AWS_REGION}
       - run:
           name: Make CodeDeploy API call
           command: |
