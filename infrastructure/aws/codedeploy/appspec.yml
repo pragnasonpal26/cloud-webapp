@@ -1,0 +1,17 @@
+version: 0.0
+os: centos
+
+files:
+  - source: ./ccwebapp/webapp/target/webApplication-0.0.1-SNAPSHOT.jar
+    destination: /var
+
+hooks:
+  AfterInstall:
+   - location: ./afterInstallation.sh
+     timeout: 180
+     runas: centos
+  ApplicationStart:
+   - location: ./applicationStart.sh
+     timeout: 180
+     runas: centos
+
