@@ -14,8 +14,7 @@ dbsubnetname=$stackname'-csye6225-subnet3'
 groupname='csye6225-webapps-sg'
 rdsgroupname='csye6225-rds-sg'
 
-#amiID=`aws ec2 describe-tags --filters "Name=value,Values=custom-centos" --query 'Tags[0].ResourceId' --output text`
-amiID='ami-027d65157141fc35c'
+amiID=`aws ec2 describe-tags --filters "Name=value,Values=custom-centos" --query 'Tags[0].ResourceId' --output text`
 #amiID='aws ec2 describe-images --filters "Name=tag:custom,Values=custom-centos" --query 'Images[0].ImageId' --output text'
 VPCID=`aws ec2 describe-tags --filters "Name=value,Values=$vpcname" --query 'Tags[0].ResourceId' --output text`
 webAppSubnetID=`aws ec2 describe-tags --filters "Name=value,Values=$websubnetname" --query 'Tags[0].ResourceId' --output text`
