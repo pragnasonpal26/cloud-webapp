@@ -9,7 +9,7 @@ hooks:
   BeforeInstall:
    - location: scripts/install_dependencies.sh
      timeout: 300
-     runas: root
+     runas: centos
   AfterInstall:
    - location: ./afterInstallation.sh
      timeout: 180
