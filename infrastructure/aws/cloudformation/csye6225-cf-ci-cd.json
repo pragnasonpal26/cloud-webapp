@@ -1,0 +1,159 @@
+{
+  "Resources": {
+    "CodeDeployEC2ServiceRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/"
+      }
+    },
+    "RolePolicies": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "CodeDeploy-EC2-S3",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+    {
+        "Effect": "Allow",
+        "Action": [
+                "s3:Get*",
+                "s3:List*"
+              ],
+        "Resource": [
+                "arn:aws:s3:::code-deploy.csye6225-su19-sonpalp.me/*"
+              ]
+            }
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "CodeDeployEC2ServiceRole"
+          }
+        ]
+      }
+    },
+
+     "RolePolicies2": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "CircleCI-Upload-To-S3",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:PutObject"
+              ],
+              "Resource": [
+                "arn:aws:s3:::code-deploy.csye6225-su19-sonpalp.me/*"
+              ]
+            }
+          ]
+        }
+      }
+    },
+
+    "RolePolicies3": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "CircleCI-Code-Deploy",
+        "Users": [
+          "circleci"
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "codedeploy:RegisterApplicationRevision",
+                "codedeploy:GetApplicationRevision"
+              ],
+              "Resource": [
+                "arn:aws:codedeploy:us-east-1:409053562575:application:CSYE6225WebappCodeDeploy"
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "codedeploy:CreateDeployment",
+                "codedeploy:GetDeployment"
+              ],
+              "Resource": [
+                "*"
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "codedeploy:GetDeploymentConfig"
+              ],
+              "Resource": [
+                "arn:aws:codedeploy:us-east-1:409053562575:deploymentconfig:CodeDeployDefault.OneAtATime",
+                "arn:aws:codedeploy:us-east-1:409053562575:deploymentconfig:CodeDeployDefault.HalfAtATime",
+                "arn:aws:codedeploy:us-east-1:409053562575:deploymentconfig:CodeDeployDefault.AllAtOnce"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "CodeDeployApplication": {
+      "Type": "AWS::CodeDeploy::Application",
+      "Properties": {
+        "ApplicationName": "csye6225-webapp",
+        "ComputePlatform" : "EC2"
+      }
+    },
+    "DeploymentGroup": {
+      "Type": "AWS::CodeDeploy::DeploymentGroup",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "CodeDeployApplication"
+    },
+      "DeploymentGroupName": "csye6225-webapp-deployment",
+      "ServiceRoleArn": {
+          "Fn::GetAtt": [
+            "CodeDeployServiceRole",
+            "Arn"
+          ]
+        },
+       "DeploymentConfigName": "CodeDeployDefault.AllAtOnce",
+       "DeploymentStyle": {
+          "DeploymentType": "IN_PLACE"
+        },
+        "Ec2TagFilters": [{
+					"Key": "Name",
+					"Value": "EC2Instance",
+					"Type": "KEY_AND_VALUE"
+		}],
+				
+        "AutoRollbackConfiguration": {
+          "Enabled": "true",
+          "Events": [ "DEPLOYMENT_FAILURE" ]
+        }
+      }
+    }
+  }
+    
+
+
+
+   
