@@ -51,4 +51,4 @@ jobs:
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --deployment-group-name csye6225-webapp-deployment \
             --s3-location bucket=app-jar-ec2,bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip \
-            --region {AWS_REGION}
+            --region {AWS_REGION} --aws-access-key-id {AWS_ACCESS_KEY_ID} --aws-secret-access-key {AWS_SECRET_ACCESS_KEY}
