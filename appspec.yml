@@ -1,12 +1,16 @@
 version: 0.0
-os: linux
+os: centos
 
-files:             
-  - source: ./webapp/build/libs/ROOT.war
-    destination: /opt/tomcat/webapps
+files:
+  - source: .target/webApplication-0.0.1-SNAPSHOT.jar
+    destination: /var
 
 hooks:
   AfterInstall:
-   - location: ./afterInstall.sh
+   - location: ./afterInstallation.sh
+     timeout: 180
+     runas: centos
+  ApplicationStart:
+   - location: ./applicationStart.sh
      timeout: 180
      runas: centos
