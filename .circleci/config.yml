@@ -38,18 +38,18 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y awscli
             aws --version
+            aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
+            aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+            aws configure set region ${AWS_REGION}
       - run:
           name: Deploy
           command: |
             pwd
             ls
-            aws s3 sync codedeploy_artifact s3://app-jar-ec2 --region ${AWS_REGION}
+            aws s3 sync codedeploy_artifact s3://app-jar-ec2
       - run:
           name: Make CodeDeploy API call
           command: |
-            aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
-            aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
-            aws configure set region ${AWS_REGION}
             aws deploy create-deployment --application-name csye6225-webapp \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --deployment-group-name csye6225-webapp-deployment \
