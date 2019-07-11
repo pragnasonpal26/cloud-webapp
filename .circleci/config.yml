@@ -44,12 +44,6 @@ jobs:
             pwd
             ls
             aws s3 sync codedeploy_artifact s3://app-jar-ec2 --region ${AWS_REGION}
-      - aws-code-deploy/deploy:
-          application-name: csye6225-webapp
-          deployment-group: myDeploymentGroup
-          service-role-arn: myDeploymentGroupRoleARN
-          bundle-bucket: myApplicationS3Bucket
-          bundle-key: myS3BucketKey
       - run:
           name: Make CodeDeploy API call
           command: |
