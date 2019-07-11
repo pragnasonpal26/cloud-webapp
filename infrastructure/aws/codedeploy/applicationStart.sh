@@ -1,3 +1,3 @@
 #!/bin/bash
 
-yum service tomcat8 start
+sudo systemctl start tomcat.service

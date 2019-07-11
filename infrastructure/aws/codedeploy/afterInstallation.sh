@@ -1,6 +1,6 @@
 #!/bin/bash
 
-yum service tomcat8 stop
+sudo systemctl stop tomcat.service
 
 #sudo rm -rf /opt/tomcat/webapps/docs  /opt/tomcat/webapps/examples /opt/tomcat/webapps/host-manager  /opt/tomcat/webapps/manager /opt/tomcat/webapps/ROOT
 
