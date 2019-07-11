@@ -6,6 +6,10 @@ files:
     destination: /var
 
 hooks:
+  BeforeInstall:
+   - location: scripts/install_dependencies.sh
+      timeout: 300
+      runas: root
   AfterInstall:
    - location: ./afterInstallation.sh
      timeout: 180
