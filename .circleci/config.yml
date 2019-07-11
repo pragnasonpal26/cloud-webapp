@@ -44,11 +44,16 @@ jobs:
             pwd
             ls
             aws s3 sync codedeploy_artifact s3://app-jar-ec2 --region ${AWS_REGION}
+      - aws-code-deploy/deploy:
+          application-name: csye6225-webapp
+          deployment-group: myDeploymentGroup
+          service-role-arn: myDeploymentGroupRoleARN
+          bundle-bucket: myApplicationS3Bucket
+          bundle-key: myS3BucketKey
       - run:
           name: Make CodeDeploy API call
           command: |
             aws deploy create-deployment --application-name csye6225-webapp \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --deployment-group-name csye6225-webapp-deployment \
-            --s3-location bucket=app-jar-ec2,bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip \
-            --region {AWS_REGION} --aws-access-key-id {AWS_ACCESS_KEY_ID} --aws-secret-access-key {AWS_SECRET_ACCESS_KEY}
+            --s3-location bucket=app-jar-ec2,bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip
