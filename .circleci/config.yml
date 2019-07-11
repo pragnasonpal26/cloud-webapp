@@ -50,4 +50,5 @@ jobs:
             aws deploy create-deployment --application-name csye6225-webapp \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --deployment-group-name csye6225-webapp-deployment \
-            --s3-location bucket=app-jar-ec2,bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip 
+            --s3-location bucket=app-jar-ec2,bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip \
+            --region {AWS_REGION}
