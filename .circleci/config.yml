@@ -9,19 +9,19 @@ jobs:
           name: Build Artifact
           command: |
             cd webapp
-            ./gradlew war
-            cd build/libs
+            mvn install
+            cd target
             ls -al
             cd ../../..
       - run:
           name: Zip Artifact
           command: |
-            echo "Hello the current build number is ${CIRCLE_BUILD_NUM}"
+            echo "Hello current build number is ${CIRCLE_BUILD_NUM}"
             pwd
             ls -al
             mkdir -p codedeploy_artifact
             cp infrastructure/aws/codedeploy/*.sh .
-            zip -r csye6225-web-app-${CIRCLE_BUILD_NUM}.zip webapp/build/libs/ROOT.war *.sh *.yml
+            zip -r csye6225-web-app-${CIRCLE_BUILD_NUM}.zip webapp/target/webApplication-0.0.1-SNAPSHOT.jar *.sh *.yml
             ls -al
             mv csye6225-web-app-${CIRCLE_BUILD_NUM}.zip codedeploy_artifact/
             ls -al
@@ -33,10 +33,24 @@ jobs:
             pwd
             ls -al
       - run:
-          name: Upload Artifact to S3
+          name: Install awscli
           command: |
-            echo "Hello"
+            sudo apt-get update
+            sudo apt-get install -y awscli
+            aws --version
+            aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
+            aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+            aws configure set region ${AWS_REGION}
+      - run:
+          name: Deploy
+          command: |
+            pwd
+            ls
+            aws s3 sync codedeploy_artifact s3://app-jar-ec2
       - run:
           name: Make CodeDeploy API call
           command: |
-            echo "Hello CodeDeploy" 
+            aws deploy create-deployment --application-name csye6225-webapp \
+            --deployment-config-name CodeDeployDefault.OneAtATime \
+            --deployment-group-name csye6225-webapp-deployment \
+            --s3-location bucket=app-jar-ec2,bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip
