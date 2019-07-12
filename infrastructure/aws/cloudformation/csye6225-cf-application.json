@@ -224,9 +224,18 @@
                 "s3:Get*",
                 "s3:List*"
               ],
-              "Resource": [
-                "arn:aws:s3:::code-deploy.csye6225-su19-sonpalp.me/*"
-              ]
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "BucketName"
+                    },
+                    "/"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -290,7 +299,19 @@
                 "codedeploy:GetApplicationRevision"
               ],
               "Resource": [
-                "arn:aws:codedeploy:us-east-1:409053562575:application:CSYE6225WebappCodeDeploy"
+                {
+                  "Fn::Join": [
+                    ":",
+                    [
+                      "arn:aws:codedeploy:us-east-1",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      "application",
+                      "CSYE6225WebappCodeDeploy"
+                    ]
+                  ]
+                }
               ]
             },
             {
@@ -309,9 +330,42 @@
                 "codedeploy:GetDeploymentConfig"
               ],
               "Resource": [
-                "arn:aws:codedeploy:us-east-1:409053562575:deploymentconfig:CodeDeployDefault.OneAtATime",
-                "arn:aws:codedeploy:us-east-1:409053562575:deploymentconfig:CodeDeployDefault.HalfAtATime",
-                "arn:aws:codedeploy:us-east-1:409053562575:deploymentconfig:CodeDeployDefault.AllAtOnce"
+                {
+                  "Fn::Join": [
+                    ":",
+                    [
+                      "arn:aws:codedeploy:us-east-1",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      "deploymentconfig:CodeDeployDefault.OneAtATime"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    ":",
+                    [
+                      "arn:aws:codedeploy:us-east-1",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      "deploymentconfig:CodeDeployDefault.HalfAtATime"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    ":",
+                    [
+                      "arn:aws:codedeploy:us-east-1",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      "deploymentconfig:CodeDeployDefault.AllAtOnce"
+                    ]
+                  ]
+                }
               ]
             }
           ]
@@ -333,9 +387,18 @@
               "Action": [
                 "s3:PutObject"
               ],
-              "Resource": [
-                "arn:aws:s3:::code-deploy.csye6225-su19-sonpalp.me/*"
-              ]
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "BucketName"
+                    },
+                    "/"
+                  ]
+                ]
+              }
             }
           ]
         }
