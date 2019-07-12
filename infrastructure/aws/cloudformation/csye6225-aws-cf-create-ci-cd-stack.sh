@@ -1,7 +1,8 @@
-echo "Updating Stack"
+echo "CI-CD Stack"
 
-echo "Input the updated application stack name"
+echo "Input the stack name"
 read stack_name
+
 stackId=$(aws cloudformation create-stack --stack-name $stack_name --template-body file://csye6225-cf-ci-cd.json --parameters --capabilities CAPABILITY_NAMED_IAM --query [StackId] --output text)
 echo "#############################"
 echo $stackId
