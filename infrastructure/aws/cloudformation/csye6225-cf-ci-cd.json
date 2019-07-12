@@ -22,7 +22,7 @@
         "Path": "/"
       }
     },
-    "RolePolicies": {
+    "CodeDeployEC2S3Policy": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
         "PolicyName": "CodeDeploy-EC2-S3",
@@ -48,32 +48,46 @@
         ]
       }
     },
-
-     "RolePolicies2": {
-      "Type": "AWS::IAM::Policy",
+    "CodeDeployEC2ServiceRoleInstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
       "Properties": {
-        "PolicyName": "CircleCI-Upload-To-S3",
-        "PolicyDocument": {
+        "Path": "/",
+        "Roles": [
+          {
+            "Ref": "CodeDeployEC2ServiceRole"
+          }
+        ]
+      }
+    },
+    "CodeDeployServiceRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
+        ],
+        "AssumeRolePolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
             {
               "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "codedeploy.amazonaws.com"
+                ]
+              },
               "Action": [
-                "s3:PutObject"
-              ],
-              "Resource": [
-                "arn:aws:s3:::code-deploy.csye6225-su19-sonpalp.me/*"
+                "sts:AssumeRole"
               ]
             }
           ]
-        }
+        },
+        "Path": "/"
       }
     },
-
-    "RolePolicies3": {
+    "circleCIcodedeployPolicy": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
-        "PolicyName": "CircleCI-Code-Deploy",
+        "PolicyName": "circleCI-Code-Deploy",
         "Users": [
           "circleci"
         ],
@@ -107,8 +121,31 @@
               ],
               "Resource": [
                 "arn:aws:codedeploy:us-east-1:409053562575:deploymentconfig:CodeDeployDefault.OneAtATime",
-                "arn:aws:codedeploy:us-east-1:409053562575:deploymentconfig:CodeDeployDefault.HalfAtATime",
-                "arn:aws:codedeploy:us-east-1:409053562575:deploymentconfig:CodeDeployDefault.AllAtOnce"
+              "arn:aws:codedeploy:us-east-1:409053562575:deploymentconfig:CodeDeployDefault.HalfAtATime",
+              "arn:aws:codedeploy:us-east-1:409053562575:deploymentconfig:CodeDeployDefault.AllAtOnce"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "circleCIuploadToS3Policy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "CircleCI-Upload-To-S3",
+        "Users": [
+          "circleci"
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:PutObject"
+              ],
+              "Resource": [
+                "arn:aws:s3:::code-deploy.csye6225-su19-sonpalp.me/*"
               ]
             }
           ]
@@ -118,8 +155,8 @@
     "CodeDeployApplication": {
       "Type": "AWS::CodeDeploy::Application",
       "Properties": {
-        "ApplicationName": "csye6225-webapp",
-        "ComputePlatform" : "EC2"
+         "ApplicationName": "csye6225-webapp",
+         "ComputePlatform" : "Server"
       }
     },
     "DeploymentGroup": {
@@ -127,31 +164,35 @@
       "Properties": {
         "ApplicationName": {
           "Ref": "CodeDeployApplication"
-    },
-      "DeploymentGroupName": "csye6225-webapp-deployment",
-      "ServiceRoleArn": {
+        },
+        "DeploymentConfigName": "CodeDeployDefault.AllAtOnce",
+        "DeploymentGroupName": "csye6225-webapp-deployment",
+        "DeploymentStyle": {
+          "DeploymentType": "IN_PLACE",
+          "DeploymentOption": "WITHOUT_TRAFFIC_CONTROL"
+        },
+        "Ec2TagFilters": [
+          {
+            "Type": "KEY_AND_VALUE",
+            "Key": "Name",
+            "Value": "EC2Instance"
+          }
+        ],
+        "ServiceRoleArn": {
           "Fn::GetAtt": [
             "CodeDeployServiceRole",
             "Arn"
           ]
         },
-       "DeploymentConfigName": "CodeDeployDefault.AllAtOnce",
-       "DeploymentStyle": {
-          "DeploymentType": "IN_PLACE"
-        },
-        "Ec2TagFilters": [{
-					"Key": "Name",
-					"Value": "EC2Instance",
-					"Type": "KEY_AND_VALUE"
-		}],
-				
-        "AutoRollbackConfiguration": {
-          "Enabled": "true",
-          "Events": [ "DEPLOYMENT_FAILURE" ]
-        }
+  "AutoRollbackConfiguration": {
+        "Enabled": "true",
+        "Events": [ "DEPLOYMENT_FAILURE" ]
+      }
+
       }
     }
-  }
+}
+}
     
 
 
