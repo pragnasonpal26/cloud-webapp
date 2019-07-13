@@ -7,6 +7,15 @@ read keyName
 echo "Input network stack name"
 read stackname
 
+echo "Enter your CodeDeploy bucket name "
+read BUCKET_NAME
+
+echo "Enter your Image bucket name "
+read IMG_BUCKET_NAME
+
+echo "Enter your AWS Acc ID "
+read AccId
+
 amitag='custom-centos'
 vpcname=$stackname'-csye6225-vpc'
 websubnetname=$stackname'-csye6225-subnet1'
@@ -27,7 +36,8 @@ stackId=$(aws cloudformation create-stack --stack-name $name --capabilities CAPA
 "ParameterKey=KeyName,ParameterValue=$keyName" "ParameterKey=ImageId,ParameterValue=$amiID" \
 "ParameterKey=InstanceType,ParameterValue=$InstanceType" "ParameterKey=VPCID,ParameterValue=$VPCID" \
 "ParameterKey=webAppSubnetID,ParameterValue=$webAppSubnetID" "ParameterKey=dbSubnetID,ParameterValue=$dbSubnetID" \
-"ParameterKey=SecurityGroupID,ParameterValue=$GROUPID" \
+"ParameterKey=SecurityGroupID,ParameterValue=$GROUPID" "ParameterKey=BucketName,ParameterValue=$BUCKET_NAME" \
+"ParameterKey=AccId,ParameterValue=$AccId" "ParameterKey=Img,ParameterValue=$IMG_BUCKET_NAME" \
 --query [StackId] --output text)
 
 echo "Stack Id - "
