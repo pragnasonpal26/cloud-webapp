@@ -7,6 +7,7 @@ read keyName
 echo "Input network stack name"
 read stackname
 
+<<<<<<< HEAD
 echo "Enter your CodeDeploy bucket name "
 read BUCKET_NAME
 
@@ -15,6 +16,11 @@ read IMG_BUCKET_NAME
 
 echo "Enter your AWS Acc ID "
 read AccId
+=======
+echo "Enter your NUID ID (for ex. If NUID  is doe.j@husky.neu.edu then enter doej) "
+read BUCKET_NAME
+
+>>>>>>> 277e13b4c900fe3c876427163dfa102da5bbc429
 
 amitag='custom-centos'
 vpcname=$stackname'-csye6225-vpc'
@@ -31,6 +37,7 @@ dbSubnetID=`aws ec2 describe-tags --filters "Name=value,Values=$dbsubnetname" --
 GROUPID=`aws ec2 describe-tags --filters "Name=value,Values=$groupname" --query 'Tags[0].ResourceId' --output text`
 #RDSGROUPID=`aws ec2 describe-tags --filters "Name=value,Values=$rdsgroupname" --query 'Tags[0].ResourceId' --output text`
 InstanceType='t2.micro'
+<<<<<<< HEAD
 
 stackId=$(aws cloudformation create-stack --stack-name $name --capabilities CAPABILITY_NAMED_IAM --template-body file://csye6225-cf-application.json --parameters "ParameterKey=stackName,ParameterValue=$name" \
 "ParameterKey=KeyName,ParameterValue=$keyName" "ParameterKey=ImageId,ParameterValue=$amiID" \
@@ -49,3 +56,6 @@ else
     aws cloudformation wait stack-create-complete --stack-name $stackId
     echo "Stack Creation Complete"
 fi
+=======
+aws cloudformation create-stack --stack-name $name --capabilities CAPABILITY_NAMED_IAM --template-body file://csye6225-cf-application.json --parameters "ParameterKey=stackName,ParameterValue=$name" "ParameterKey=KeyName,ParameterValue=$keyName" "ParameterKey=BucketName,ParameterValue=$BUCKET_NAME" "ParameterKey=ImageId,ParameterValue=$amiID" "ParameterKey=InstanceType,ParameterValue=$InstanceType" "ParameterKey=VPCID,ParameterValue=$VPCID" "ParameterKey=webAppSubnetID,ParameterValue=$webAppSubnetID" "ParameterKey=dbSubnetID,ParameterValue=$dbSubnetID" "ParameterKey=SecurityGroupID,ParameterValue=$GROUPID"
+>>>>>>> 277e13b4c900fe3c876427163dfa102da5bbc429
