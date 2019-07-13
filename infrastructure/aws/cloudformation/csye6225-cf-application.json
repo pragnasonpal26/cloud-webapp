@@ -270,8 +270,7 @@
                       "arn:aws:s3:::",
                       {
                         "Ref": "BucketName"
-                      },
-                      "/*"
+                      }
                     ]
                   ]
                 }
@@ -347,7 +346,7 @@
                           "Ref": "AccId"
                         },
                         "application",
-                        "CSYE6225WebappCodeDeploy"
+                        "csye6225-webapp"
                       ]
                     ]
                   }
@@ -433,7 +432,8 @@
                       "arn:aws:s3:::",
                       {
                         "Ref": "BucketName"
-                      }
+                      },
+                      "/*"
                     ]
                   ]
                 }
