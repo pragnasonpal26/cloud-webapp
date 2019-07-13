@@ -1,4 +1,491 @@
 {
+<<<<<<< HEAD
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Cloud Formation template for application stack creation - csye6225 summer 19",
+    "Parameters": {
+      "stackName": {
+        "Type": "String"
+      },
+      "KeyName": {
+        "Type": "String"
+      },
+      "ImageId": {
+        "Type": "String"
+      },
+      "InstanceType": {
+        "Type": "String"
+      },
+      "VPCID": {
+        "Type": "String"
+      },
+      "webAppSubnetID": {
+        "Type": "String"
+      },
+      "dbSubnetID": {
+        "Type": "String"
+      },
+      "SecurityGroupID": {
+        "Type": "String"
+      },
+      "BucketName":{
+        "Type":"String"
+      },
+      "AccId":{
+        "Type":"String"
+      },
+      "Img":{
+        "Type":"String"
+      }
+    },
+    "Resources": {
+      "csye6225ec2Role": {
+        "Type": "AWS::IAM::Role",
+        "Properties": {
+           "AssumeRolePolicyDocument": {
+              "Version" : "2012-10-17",
+              "Statement": [ {
+                 "Effect": "Allow",
+                 "Principal": {
+                    "Service": [ "ec2.amazonaws.com" ]
+                 },
+                 "Action": [ "sts:AssumeRole" ]
+              } ]
+            },
+           "Path": "/",
+           "Policies": [
+            {
+              "PolicyName": "s3deployrdsfull",
+              "PolicyDocument": {
+                 "Version" : "2012-10-17",
+                 "Statement": [ {
+                    "Effect": "Allow",
+                    "Action": [
+                       "s3:*",
+                       "codedeploy:*",
+                       "rds:*",
+                       "ec2:DescribeAccountAttributes",
+                       "ec2:DescribeAvailabilityZones",
+                       "ec2:DescribeInternetGateways",
+                       "ec2:DescribeSecurityGroups",
+                       "ec2:DescribeSubnets",
+                       "ec2:DescribeVpcAttribute",
+                       "ec2:DescribeVpcs"
+                    ],
+                    "Resource": "*"
+                  } ]
+              }
+            }
+            ]
+        }
+    },
+    "EC2InstanceProfile": {
+        "Type": "AWS::IAM::InstanceProfile",
+        "Properties": {
+           "Path": "/",
+           "Roles": [ {
+              "Ref": "csye6225ec2Role"
+           } ]
+        }
+    },
+      "DBSubnetGroup": {
+        "Type": "AWS::RDS::DBSubnetGroup",
+        "Properties": {
+          "DBSubnetGroupDescription": "description",
+          "SubnetIds": [
+            {
+              "Ref": "webAppSubnetID"
+            },
+            {
+              "Ref": "dbSubnetID"
+            }
+          ]
+        }
+      },
+      "RDSSecurityGroup": {
+        "Type": "AWS::RDS::DBSecurityGroup",
+        "Properties": {
+          "GroupDescription": "security group for rds",
+          "DBSecurityGroupIngress": {
+            "EC2SecurityGroupId": {
+              "Ref": "SecurityGroupID"
+            }
+          },
+          "EC2VpcId": {
+            "Ref": "VPCID"
+          },
+          "Tags": [
+            {
+              "Key": "Name",
+              "Value": "csye6225-rds"
+            }
+          ]
+        }
+      },
+      "Ec2Instance": {
+        "Type": "AWS::EC2::Instance",
+        "Properties": {
+          "ImageId": {
+            "Ref": "ImageId"
+          },
+          "KeyName": {
+            "Ref": "KeyName"
+          },
+          "InstanceType": {
+            "Ref": "InstanceType"
+          },
+          "IamInstanceProfile" : {"Ref" : "EC2InstanceProfile"},
+          "NetworkInterfaces": [
+            {
+              "AssociatePublicIpAddress": "true",
+              "DeviceIndex": "0",
+              "GroupSet": [
+                {
+                  "Ref": "SecurityGroupID"
+                }
+              ],
+              "SubnetId": {
+                "Ref": "webAppSubnetID"
+              }
+            }
+          ],
+          "BlockDeviceMappings": [
+            {
+              "DeviceName": "/dev/sdm",
+              "Ebs": {
+                "VolumeType": "gp2",
+                "DeleteOnTermination": "true",
+                "VolumeSize": "20"
+              }
+            }
+          ],
+          "DisableApiTermination": "true",
+          "UserData": {
+            "Fn::Base64": {
+              "Fn::Join": [
+                "",
+                [
+                  "--regionName=us-east-1 --bucketName=",
+                  {"Ref":"Img"},
+                  "--spring.profile.active=prod --spring.datasource.url=jdbc:mysql://",
+                  {
+                    "Fn::GetAtt": [
+                      "RDSInstance",
+                      "Endpoint.Address"
+                    ]
+                  },
+                  ":3306/csye6225?serverTimezone=UTC&createDatabaseIfNotExist=true --spring.datasource.username=csye6225master --spring.datasource.password=csye6225password"
+                ]
+              ]
+            }
+          }
+        }
+      },
+      "DynamoDBTable": {
+        "Type": "AWS::DynamoDB::Table",
+        "Properties": {
+          "TableName": "csye6225",
+          "AttributeDefinitions": [
+            {
+              "AttributeName": "id",
+              "AttributeType": "S"
+            }
+          ],
+          "KeySchema": [
+            {
+              "AttributeName": "id",
+              "KeyType": "HASH"
+            }
+          ],
+          "ProvisionedThroughput": {
+            "ReadCapacityUnits": "5",
+            "WriteCapacityUnits": "5"
+          }
+        }
+      },
+      "RDSInstance": {
+        "Type": "AWS::RDS::DBInstance",
+        "Properties": {
+          "DBName": "csye6225",
+          "DBInstanceClass": "db.t2.medium",
+          "AllocatedStorage": "20",
+          "MultiAZ": "false",
+          "Engine": "MySQL",
+          "EngineVersion": "5.6.37",
+          "StorageType": "gp2",
+          "MasterUsername": "csye6225master",
+          "MasterUserPassword": "csye6225password",
+          "DBInstanceIdentifier": "csye6225-su19",
+          "DBSecurityGroups": [
+            {
+              "Ref": "RDSSecurityGroup"
+            }
+          ],
+          "PubliclyAccessible": "true",
+          "DBSubnetGroupName": {
+            "Ref": "DBSubnetGroup"
+          }
+        }
+      },
+      "CodeDeployEC2ServiceRole": {
+        "Type": "AWS::IAM::Role",
+        "Properties": {
+          "AssumeRolePolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": [
+                    "ec2.amazonaws.com"
+                  ]
+                },
+                "Action": [
+                  "sts:AssumeRole"
+                ]
+              }
+            ]
+          },
+          "Path": "/"
+        }
+      },
+      "CodeDeployEC2S3Policy": {
+        "Type": "AWS::IAM::Policy",
+        "Properties": {
+          "PolicyName": "CodeDeploy-EC2-S3",
+          "Users": [
+            "circleci"
+          ],
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "s3:Get*",
+                  "s3:List*"
+                ],
+                "Resource": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "BucketName"
+                      }
+                    ]
+                  ]
+                }
+              }
+            ]
+          },
+          "Roles": [
+            {
+              "Ref": "CodeDeployEC2ServiceRole"
+            }
+          ]
+        }
+      },
+      "CodeDeployEC2ServiceRoleInstanceProfile": {
+        "Type": "AWS::IAM::InstanceProfile",
+        "Properties": {
+          "Path": "/",
+          "Roles": [
+            {
+              "Ref": "CodeDeployEC2ServiceRole"
+            }
+          ]
+        }
+      },
+      "CodeDeployServiceRole": {
+        "Type": "AWS::IAM::Role",
+        "Properties": {
+          "ManagedPolicyArns": [
+            "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
+          ],
+          "AssumeRolePolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": [
+                    "codedeploy.amazonaws.com"
+                  ]
+                },
+                "Action": [
+                  "sts:AssumeRole"
+                ]
+              }
+            ]
+          },
+          "Path": "/"
+        }
+      },
+      "circleCIcodedeployPolicy": {
+        "Type": "AWS::IAM::Policy",
+        "Properties": {
+          "PolicyName": "circleCI-Code-Deploy",
+          "Users": [
+            "circleci"
+          ],
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "codedeploy:RegisterApplicationRevision",
+                  "codedeploy:GetApplicationRevision"
+                ],
+                "Resource": [
+                  {
+                    "Fn::Join": [
+                      ":",
+                      [
+                        "arn:aws:codedeploy:us-east-1",
+                        {
+                          "Ref": "AccId"
+                        },
+                        "application",
+                        "csye6225-webapp"
+                      ]
+                    ]
+                  }
+                ]
+              },
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "codedeploy:CreateDeployment",
+                  "codedeploy:GetDeployment"
+                ],
+                "Resource": [
+                  "*"
+                ]
+              },
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "codedeploy:GetDeploymentConfig"
+                ],
+                "Resource": [
+                  {
+                    "Fn::Join": [
+                      ":",
+                      [
+                        "arn:aws:codedeploy:us-east-1",
+                        {
+                          "Ref": "AccId"
+                        },
+                        "deploymentconfig:CodeDeployDefault.OneAtATime"
+                      ]
+                    ]
+                  },
+                  {
+                    "Fn::Join": [
+                      ":",
+                      [
+                        "arn:aws:codedeploy:us-east-1",
+                        {
+                          "Ref": "AccId"
+                        },
+                        "deploymentconfig:CodeDeployDefault.HalfAtATime"
+                      ]
+                    ]
+                  },
+                  {
+                    "Fn::Join": [
+                      ":",
+                      [
+                        "arn:aws:codedeploy:us-east-1:",
+                        {
+                          "Ref": "AccId"
+                        },
+                        "deploymentconfig:CodeDeployDefault.AllAtOnce"
+                      ]
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "circleCIuploadToS3Policy": {
+        "Type": "AWS::IAM::Policy",
+        "Properties": {
+          "PolicyName": "CircleCI-Upload-To-S3",
+          "Users": [
+            "circleci"
+          ],
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "s3:PutObject"
+                ],
+                "Resource": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "BucketName"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      },
+      "CodeDeployApplication": {
+        "Type": "AWS::CodeDeploy::Application",
+        "Properties": {
+          "ApplicationName": "csye6225-webapp",
+          "ComputePlatform": "Server"
+        }
+      },
+      "DeploymentGroup": {
+        "Type": "AWS::CodeDeploy::DeploymentGroup",
+        "Properties": {
+          "ApplicationName": {
+            "Ref": "CodeDeployApplication"
+          },
+          "DeploymentConfigName": "CodeDeployDefault.AllAtOnce",
+          "DeploymentGroupName": "csye6225-webapp-deployment",
+          "DeploymentStyle": {
+            "DeploymentType": "IN_PLACE",
+            "DeploymentOption": "WITHOUT_TRAFFIC_CONTROL"
+          },
+          "Ec2TagFilters": [
+            {
+              "Type": "KEY_AND_VALUE",
+              "Key": "aws:cloudformation:logical-id",
+              "Value": "Ec2Instance"
+            }
+          ],
+          "ServiceRoleArn": {
+            "Fn::GetAtt": [
+              "CodeDeployServiceRole",
+              "Arn"
+            ]
+          },
+          "AutoRollbackConfiguration": {
+            "Enabled": "true",
+            "Events": [
+              "DEPLOYMENT_FAILURE"
+            ]
+          }
+        }
+      }
+    }
+  }
+=======
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "Cloud Formation template for application stack creation - csye6225 summer 19",
   "Parameters": {
@@ -460,3 +947,4 @@
     }
   }
 }
+>>>>>>> 277e13b4c900fe3c876427163dfa102da5bbc429

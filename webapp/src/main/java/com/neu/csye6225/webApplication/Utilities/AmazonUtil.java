@@ -23,22 +23,19 @@ public class AmazonUtil {
 
     private AmazonS3 s3client;
 
-    @Value("${regionName}")
-    private String regionName;
+    //@Value("${regionName}")
+    //private String regionName;
     @Value("${prefixUrl}")
     private String prefixUrl;
     @Value("${bucketName}")
     private String bucketName;
-    @Value("${accessKey}")
-    private String accessKey;
-    @Value("${secretKey}")
-    private String secretKey;
+    //@Value("${accessKey}")
+    //private String accessKey;
+    //@Value("${secretKey}")
+    //private String secretKey;
     @PostConstruct
     private void initializeAmazon() {
-        AWSCredentials credentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
-        this.s3client = AmazonS3ClientBuilder.standard()
-                .withRegion(regionName)
-                .withCredentials(new AWSStaticCredentialsProvider(credentials)).build();
+        s3client = AmazonS3ClientBuilder.defaultClient();
     }
 
 

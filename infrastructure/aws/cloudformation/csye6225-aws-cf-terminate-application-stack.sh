@@ -6,3 +6,6 @@ EC2_ID=$(aws ec2 describe-instances --query "Reservations[*].Instances[*].Instan
 aws ec2 modify-instance-attribute --instance-id $EC2_ID --no-disable-api-termination 
 
 aws cloudformation delete-stack --stack-name $name
+aws cloudformation wait stack-delete-complete --stack-name $name
+
+echo "Stack succesfully terminated"
