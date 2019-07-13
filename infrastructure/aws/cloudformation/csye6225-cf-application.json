@@ -37,6 +37,55 @@
       }
     },
     "Resources": {
+      "csye6225ec2Role": {
+        "Type": "AWS::IAM::Role",
+        "Properties": {
+           "AssumeRolePolicyDocument": {
+              "Version" : "2012-10-17",
+              "Statement": [ {
+                 "Effect": "Allow",
+                 "Principal": {
+                    "Service": [ "ec2.amazonaws.com" ]
+                 },
+                 "Action": [ "sts:AssumeRole" ]
+              } ]
+            },
+           "Path": "/",
+           "Policies": [
+            {
+              "PolicyName": "s3deployrdsfull",
+              "PolicyDocument": {
+                 "Version" : "2012-10-17",
+                 "Statement": [ {
+                    "Effect": "Allow",
+                    "Action": [
+                       "s3:*",
+                       "codedeploy:*",
+                       "rds:*",
+                       "ec2:DescribeAccountAttributes",
+                       "ec2:DescribeAvailabilityZones",
+                       "ec2:DescribeInternetGateways",
+                       "ec2:DescribeSecurityGroups",
+                       "ec2:DescribeSubnets",
+                       "ec2:DescribeVpcAttribute",
+                       "ec2:DescribeVpcs"
+                    ],
+                    "Resource": "*"
+                  } ]
+              }
+            }
+            ]
+        }
+    },
+    "EC2InstanceProfile": {
+        "Type": "AWS::IAM::InstanceProfile",
+        "Properties": {
+           "Path": "/",
+           "Roles": [ {
+              "Ref": "csye6225ec2Role"
+           } ]
+        }
+    },
       "DBSubnetGroup": {
         "Type": "AWS::RDS::DBSubnetGroup",
         "Properties": {
@@ -83,6 +132,7 @@
           "InstanceType": {
             "Ref": "InstanceType"
           },
+          "IamInstanceProfile" : {"Ref" : "EC2InstanceProfile"},
           "NetworkInterfaces": [
             {
               "AssociatePublicIpAddress": "true",
@@ -383,8 +433,7 @@
                       "arn:aws:s3:::",
                       {
                         "Ref": "BucketName"
-                      },
-                      "/"
+                      }
                     ]
                   ]
                 }
@@ -415,8 +464,8 @@
           "Ec2TagFilters": [
             {
               "Type": "KEY_AND_VALUE",
-              "Key": "Name",
-              "Value": "EC2Instance"
+              "Key": "aws:cloudformation:logical-id",
+              "Value": "Ec2Instance"
             }
           ],
           "ServiceRoleArn": {
