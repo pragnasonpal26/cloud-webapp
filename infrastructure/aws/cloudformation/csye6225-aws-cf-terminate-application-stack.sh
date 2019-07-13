@@ -2,11 +2,6 @@
 echo "Input the stack name which you want to terminate"
 read name
 
-echo "Input S3 Bucket name"
-read bucketName
-
-aws s3 rm $bucketName --recursive
-
 EC2_ID=$(aws ec2 describe-instances --query "Reservations[*].Instances[*].InstanceId[]" --filters "Name=tag-key,Values=aws:cloudformation:stack-name" "Name=tag-value,Values=$name" --output=text)
 aws ec2 modify-instance-attribute --instance-id $EC2_ID --no-disable-api-termination 
 
