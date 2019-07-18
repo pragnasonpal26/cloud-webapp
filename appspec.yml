@@ -6,6 +6,10 @@ files:
     destination: /opt/tomcat/webapps
 
 hooks:
+  ApplicationStop:
+   - location: ./app_stop.sh
+     timeout: 300
+     runas: root
   BeforeInstall:
    - location: ./install_dependencies.sh
      timeout: 300
