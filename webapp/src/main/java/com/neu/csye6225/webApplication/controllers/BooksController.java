@@ -38,7 +38,7 @@ public class BooksController {
 	@Autowired
 	private ImagesService imagesService;
 
-	@GetMapping("/books")
+	@GetMapping("/booksBhavya")
 	@ResponseStatus(HttpStatus.OK)
 	public List<Books> getBooks() {
 		List<Books> books = booksService.getBooks();
