@@ -29,9 +29,6 @@
     "BucketName":{
       "Type":"String"
     },
-    "AccId":{
-      "Type":"String"
-    },
     "Img":{
       "Type":"String"
     }
@@ -51,6 +48,9 @@
             } ]
           },
          "Path": "/",
+         "ManagedPolicyArns" : [ 
+           "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
+            "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"],
          "Policies": [
           {
             "PolicyName": "s3deployrdsfull",
@@ -163,16 +163,16 @@
             "Fn::Join": [
               "",
               [
-                "--regionName=us-east-1 --bucketName=",
+                "sudo bash -c 'echo -e \"Environment=JAVA_OPTS=\\\"\\${JAVA_OPTS}--regionName=us-east-1 --bucketName=",
                 {"Ref":"Img"},
-                "--spring.profile.active=prod --spring.datasource.url=jdbc:mysql://",
+                " --spring.profile.active=prod --spring.datasource.url=jdbc:mysql://",
                 {
                   "Fn::GetAtt": [
                     "RDSInstance",
                     "Endpoint.Address"
                   ]
                 },
-                ":3306/csye6225?serverTimezone=UTC&createDatabaseIfNotExist=true --spring.datasource.username=csye6225master --spring.datasource.password=csye6225password"
+                ":3306/csye6225?serverTimezone=UTC&createDatabaseIfNotExist=true --spring.datasource.username=csye6225master --spring.datasource.password=csye6225password\" >> /etc/systemd/system/tomcat.service'"
               ]
             ]
           }
@@ -343,7 +343,7 @@
                     [
                       "arn:aws:codedeploy:us-east-1",
                       {
-                        "Ref": "AccId"
+                        "Ref": "AWS::AccountId"
                       },
                       "application",
                       "csye6225-webapp"
@@ -374,7 +374,7 @@
                     [
                       "arn:aws:codedeploy:us-east-1",
                       {
-                        "Ref": "AccId"
+                        "Ref": "AWS::AccountId"
                       },
                       "deploymentconfig:CodeDeployDefault.OneAtATime"
                     ]
@@ -386,7 +386,7 @@
                     [
                       "arn:aws:codedeploy:us-east-1",
                       {
-                        "Ref": "AccId"
+                        "Ref": "AWS::AccountId"
                       },
                       "deploymentconfig:CodeDeployDefault.HalfAtATime"
                     ]
@@ -398,7 +398,7 @@
                     [
                       "arn:aws:codedeploy:us-east-1:",
                       {
-                        "Ref": "AccId"
+                        "Ref": "AWS::AccountId"
                       },
                       "deploymentconfig:CodeDeployDefault.AllAtOnce"
                     ]

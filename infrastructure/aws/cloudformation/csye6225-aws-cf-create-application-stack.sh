@@ -13,8 +13,8 @@ read BUCKET_NAME
 echo "Enter your Image bucket name "
 read IMG_BUCKET_NAME
 
-echo "Enter your AWS Acc ID "
-read AccId
+# echo "Enter your AWS Acc ID "
+# read AccId
 
 amitag='custom-centos'
 vpcname=$stackname'-csye6225-vpc'
@@ -23,8 +23,7 @@ dbsubnetname=$stackname'-csye6225-subnet3'
 groupname='csye6225-webapps-sg'
 rdsgroupname='csye6225-rds-sg'
 
-amiID=`aws ec2 describe-tags --filters "Name=value,Values=custom-centos" --query 'Tags[0].ResourceId' --output text`
-#amiID='aws ec2 describe-images --filters "Name=tag:custom,Values=custom-centos" --query 'Images[0].ImageId' --output text'
+amiID=`aws ec2 describe-images --filters "Name=tag:custom,Values=custom-centos" --query 'Images[0].ImageId' --output text`
 VPCID=`aws ec2 describe-tags --filters "Name=value,Values=$vpcname" --query 'Tags[0].ResourceId' --output text`
 webAppSubnetID=`aws ec2 describe-tags --filters "Name=value,Values=$websubnetname" --query 'Tags[0].ResourceId' --output text`
 dbSubnetID=`aws ec2 describe-tags --filters "Name=value,Values=$dbsubnetname" --query 'Tags[0].ResourceId' --output text`
@@ -37,7 +36,7 @@ stackId=$(aws cloudformation create-stack --stack-name $name --capabilities CAPA
 "ParameterKey=InstanceType,ParameterValue=$InstanceType" "ParameterKey=VPCID,ParameterValue=$VPCID" \
 "ParameterKey=webAppSubnetID,ParameterValue=$webAppSubnetID" "ParameterKey=dbSubnetID,ParameterValue=$dbSubnetID" \
 "ParameterKey=SecurityGroupID,ParameterValue=$GROUPID" "ParameterKey=BucketName,ParameterValue=$BUCKET_NAME" \
-"ParameterKey=AccId,ParameterValue=$AccId" "ParameterKey=Img,ParameterValue=$IMG_BUCKET_NAME" \
+"ParameterKey=Img,ParameterValue=$IMG_BUCKET_NAME" \
 --query [StackId] --output text)
 
 echo "Stack Id - "
