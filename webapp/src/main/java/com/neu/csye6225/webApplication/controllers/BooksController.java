@@ -8,6 +8,9 @@ import java.util.UUID;
 
 import com.neu.csye6225.webApplication.entity.Images;
 import com.neu.csye6225.webApplication.service.ImagesService;
+import com.timgroup.statsd.StatsDClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -22,13 +25,18 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @CrossOrigin
 public class BooksController {
-	
+
+	private final static Logger logger = LoggerFactory.getLogger(BooksController.class);
+
+	@Autowired
+	private StatsDClient statsDClient;
+
 	@Autowired
 	private AmazonUtil amazonClient;
 
 	@Autowired
 	BooksController(AmazonUtil amazonClient) {
-	    this.amazonClient = amazonClient;
+		this.amazonClient = amazonClient;
 	}
 
 	@Autowired
@@ -40,6 +48,8 @@ public class BooksController {
 	@GetMapping("/books")
 	@ResponseStatus(HttpStatus.OK)
 	public List<Books> getBooks() {
+		logger.info("Requesting all books");
+		statsDClient.incrementCounter("endpoint.books.http.get");
 		List<Books> books = booksService.getBooks();
 		return books;
 	}
