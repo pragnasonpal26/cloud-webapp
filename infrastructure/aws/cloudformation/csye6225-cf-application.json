@@ -182,9 +182,8 @@
                         ":3306/csye6225?serverTimezone=UTC&createDatabaseIfNotExist=true\" > /usr/lib/envVar.txt'"
                     ]]
                   },
-                "sudo cp /tmp/cloudwatchconfig.json /home/centos/",
                 "sudo cp /tmp/agent_config.service /etc/systemd/system/",
-                "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/home/centos/cloudwatchconfig.json -s",
+                "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/home/centos/tmp/agent_config.json -s",
                 "sudo service agent_config.service start"
           ] ]}}
         }
