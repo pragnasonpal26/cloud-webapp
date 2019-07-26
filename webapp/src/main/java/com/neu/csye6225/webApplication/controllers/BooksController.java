@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api")
+
 public class BooksController {
 	
 	@Autowired
