@@ -27,4 +27,3 @@ public class MetricsClient {
         return new NoOpStatsDClient();
     }
 }
-
