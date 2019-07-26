@@ -3,7 +3,7 @@ os: linux
 
 files:
   - source: ./webapp/target/webApplication-0.0.1-SNAPSHOT.jar
-    destination: /
+    destination: /tmp/
 
 hooks:
   ApplicationStop:
