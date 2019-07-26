@@ -3,22 +3,30 @@ os: linux
 
 files:
   - source: ./webapp/target/webApplication-0.0.1-SNAPSHOT.jar
-    destination: /opt/tomcat/webapps
+    destination: /tmp
+  - source: ./app_stop.sh
+    destination: /home/ubuntu
+  - source: ./install_dependencies.sh
+    destination: /home/ubuntu
+  - source: ./afterInstallation.sh
+    destination: /home/ubuntu
+  - source: ./applicationStart.sh
+    destination: /home/ubuntu
 
 hooks:
   ApplicationStop:
-   - location: ./app_stop.sh
+   - location: /home/ubuntu/app_stop.sh
      timeout: 300
      runas: root
   BeforeInstall:
-   - location: ./install_dependencies.sh
+   - location: /home/ubuntu/install_dependencies.sh
      timeout: 300
      runas: root
   AfterInstall:
-   - location: ./afterInstallation.sh
+   - location: /home/ubuntu/afterInstallation.sh
      timeout: 180
      runas: root
   ApplicationStart:
-   - location: ./applicationStart.sh
+   - location: /home/ubuntu/applicationStart.sh
      timeout: 180
      runas: root
