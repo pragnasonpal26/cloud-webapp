@@ -27,8 +27,8 @@ public class ImageController {
 
     private final static Logger logger = LoggerFactory.getLogger(BooksController.class);
 
-	  @Autowired
-	  private StatsDClient statsDClient;
+    @Autowired
+    private StatsDClient statsDClient;
 
     @Autowired
     private AmazonUtil amazonClient;
@@ -48,7 +48,7 @@ public class ImageController {
     @ResponseStatus(HttpStatus.OK)
     public String getCoverImage(@PathVariable String idBook, @PathVariable String idImage) {
         logger.info("Find Image: Start");
-		    statsDClient.incrementCounter("endpoint.book.image.http.get");
+ 	statsDClient.incrementCounter("endpoint.book.image.http.get");
         Optional<Books> singleBook = booksService.getBooks(UUID.fromString(idBook));
         Images image = singleBook.get().getImage();
         logger.info("Find Image: Success!");
@@ -60,7 +60,7 @@ public class ImageController {
     @ResponseStatus(HttpStatus.OK)
     public Images postImage(@RequestParam("file") MultipartFile file, @PathVariable String idBook) {
         logger.info("Upload Image: Start");
-		    statsDClient.incrementCounter("endpoint.book.image.http.post");
+	statsDClient.incrementCounter("endpoint.book.image.http.post");
         Books singleBook = booksService.getBooks(UUID.fromString(idBook)).get();
         Images image = new Images();
         image.setUrl(imagesService.upload(file,image));
@@ -74,7 +74,7 @@ public class ImageController {
     @PutMapping("/books/{idBook}/image/{idImage}")
     public Images updateImage(@PathVariable String idBook, @PathVariable String idImage, @RequestParam("file") MultipartFile file) {
         logger.info("Update Image: Start");
-		    statsDClient.incrementCounter("endpoint.book.image.http.put");
+	statsDClient.incrementCounter("endpoint.book.image.http.put");
         Books singleBook = booksService.getBooks(UUID.fromString(idBook)).get();
         Images image = singleBook.getImage();
         image.setUrl(imagesService.updateImage(file,image));
@@ -87,7 +87,7 @@ public class ImageController {
     @DeleteMapping("/books/{idBook}/image/{idImage}")
     public ResponseEntity<String> deleteImage(@PathVariable String idImage, @PathVariable String idBook) {
         logger.info("Delete Image: Start");
-		    statsDClient.incrementCounter("endpoint.book.image.http.delete");
+	statsDClient.incrementCounter("endpoint.book.image.http.delete");
         Books singleBook = booksService.getBooks(UUID.fromString(idBook)).get();
         Images image = singleBook.getImage();
         imagesService.delete(image);
