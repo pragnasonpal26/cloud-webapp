@@ -13,7 +13,6 @@
     <groupId>com.neu.csye6225</groupId>
     <artifactId>webApplication</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <!--  <packaging>jar</packaging> -->
 
     <name>webApplication</name>
     <url>http://maven.apache.org</url>
