@@ -1,6 +1,5 @@
 package com.neu.csye6225.webApplication.controllers;
 
-
 import java.util.List;
 
 import java.util.Optional;
@@ -28,8 +27,8 @@ public class ImageController {
 
     private final static Logger logger = LoggerFactory.getLogger(BooksController.class);
 
-    @Autowired
-    private StatsDClient statsDClient;
+	  @Autowired
+	  private StatsDClient statsDClient;
 
     @Autowired
     private AmazonUtil amazonClient;
@@ -48,47 +47,55 @@ public class ImageController {
     @GetMapping("/books/{idBook}/image/{idImage}")
     @ResponseStatus(HttpStatus.OK)
     public String getCoverImage(@PathVariable String idBook, @PathVariable String idImage) {
-        logger.info("Inside_Requesting book with Image data_");
-        statsDClient.incrementCounter("_Requesting book with Image data_API");
+        logger.info("Find Image: Start");
+		    statsDClient.incrementCounter("endpoint.book.image.http.get");
         Optional<Books> singleBook = booksService.getBooks(UUID.fromString(idBook));
         Images image = singleBook.get().getImage();
+        logger.info("Find Image: Success!");
+        logger.info("Find Image: Stop");
         return imagesService.getImageUrl(image);
     }
 
     @PostMapping("/books/{idBook}/image")
     @ResponseStatus(HttpStatus.OK)
     public Images postImage(@RequestParam("file") MultipartFile file, @PathVariable String idBook) {
-        logger.info("Inside_Uploading Image for Book_");
-        statsDClient.incrementCounter("_Uploading Image for Book_API");
+        logger.info("Upload Image: Start");
+		    statsDClient.incrementCounter("endpoint.book.image.http.post");
         Books singleBook = booksService.getBooks(UUID.fromString(idBook)).get();
         Images image = new Images();
         image.setUrl(imagesService.upload(file,image));
         singleBook.setImage(image);
         booksService.update(singleBook);
+        logger.info("Upload Image: Success");
+        logger.info("Upload Image: Stop");
         return image;
     }
 
     @PutMapping("/books/{idBook}/image/{idImage}")
     public Images updateImage(@PathVariable String idBook, @PathVariable String idImage, @RequestParam("file") MultipartFile file) {
-        logger.info("Inside_Updating Image for Book_");
-        statsDClient.incrementCounter("_Updating Image for Book_API");
+        logger.info("Update Image: Start");
+		    statsDClient.incrementCounter("endpoint.book.image.http.put");
         Books singleBook = booksService.getBooks(UUID.fromString(idBook)).get();
         Images image = singleBook.getImage();
         image.setUrl(imagesService.updateImage(file,image));
         imagesService.update(image);
+        logger.info("Update Image: Success");
+        logger.info("Update Image: Stop");
         return image;
     }
 
     @DeleteMapping("/books/{idBook}/image/{idImage}")
     public ResponseEntity<String> deleteImage(@PathVariable String idImage, @PathVariable String idBook) {
-        logger.info("Inside_Deleting Image for Book_");
-        statsDClient.incrementCounter("_Deleting Image for Book_API");
+        logger.info("Delete Image: Start");
+		    statsDClient.incrementCounter("endpoint.book.image.http.delete");
         Books singleBook = booksService.getBooks(UUID.fromString(idBook)).get();
         Images image = singleBook.getImage();
         imagesService.delete(image);
         singleBook.setImage(null);
         booksService.update(singleBook);
         imagesService.deleteImages(UUID.fromString(idImage));
+        logger.info("Delete Image: Success!");
+        logger.info("Delete Image: Stop");
         return new ResponseEntity("Deleted successfully!", HttpStatus.OK);
     }
 }
