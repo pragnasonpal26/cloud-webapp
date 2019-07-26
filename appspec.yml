@@ -5,13 +5,13 @@ files:
   - source: ./webapp/target/webApplication-0.0.1-SNAPSHOT.jar
     destination: /tmp
   - source: ./app_stop.sh
-    destincation: /home/ubuntu
+    destination: /home/ubuntu
   - source: ./install_dependencies.sh
-    destincation: /home/ubuntu
+    destination: /home/ubuntu
   - source: ./afterInstallation.sh
-    destincation: /home/ubuntu
+    destination: /home/ubuntu
   - source: ./applicationStart.sh
-    destincation: /home/ubuntu
+    destination: /home/ubuntu
 
 hooks:
   ApplicationStop:
