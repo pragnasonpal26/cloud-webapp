@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @CrossOrigin
-
 public class BooksController {
 	
 	@Autowired
@@ -77,3 +76,4 @@ public class BooksController {
 		booksService.update(postBook);
 		return new ResponseEntity<>(postBook, HttpStatus.NO_CONTENT);
 	}
+}
