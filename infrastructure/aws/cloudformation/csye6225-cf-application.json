@@ -52,6 +52,9 @@
               } ]
             },
            "Path": "/",
+           "ManagedPolicyArns" : [ 
+             "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
+              "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"],
            "Policies": [
             {
               "PolicyName": "s3deployrdsfull",
@@ -161,23 +164,30 @@
           "DisableApiTermination": "true",
           "UserData": {
             "Fn::Base64": {
-              "Fn::Join": [
-                "",
-                [
-                  "--regionName=us-east-1 --bucketName=",
-                  {"Ref":"Img"},
-                  "--spring.profile.active=prod --spring.datasource.url=jdbc:mysql://",
+              "Fn::Join": ["\n",
+                [ "#!/bin/bash -xe ",
                   {
-                    "Fn::GetAtt": [
-                      "RDSInstance",
-                      "Endpoint.Address"
-                    ]
+                    "Fn::Join": ["",[
+                      "sudo bash -c 'echo -e \"--regionName=us-east-1",
+                      " --bucketName=",
+                      {"Ref":"Img"},
+                      " --spring.profile.active=prod",
+                      " --spring.datasource.username=csye6225master --spring.datasource.password=csye6225password",
+                      " --spring.datasource.url=jdbc:mysql://",
+                      {
+                        "Fn::GetAtt": [
+                          "RDSInstance",
+                          "Endpoint.Address"
+                        ]
+                      },
+                        ":3306/csye6225?serverTimezone=UTC&createDatabaseIfNotExist=true\" > /usr/lib/envVar.txt'"
+                    ]]
                   },
-                  ":3306/csye6225?serverTimezone=UTC&createDatabaseIfNotExist=true --spring.datasource.username=csye6225master --spring.datasource.password=csye6225password"
-                ]
-              ]
-            }
-          }
+                "sudo cp /tmp/cloudwatchconfig.json /home/centos/",
+                "sudo cp /tmp/agent_config.service /etc/systemd/system/",
+                "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/home/centos/cloudwatchconfig.json -s",
+                "sudo service agent_config.service start"
+          ] ]}}
         }
       },
       "DynamoDBTable": {
