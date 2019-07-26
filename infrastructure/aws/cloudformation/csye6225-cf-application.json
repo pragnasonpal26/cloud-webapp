@@ -165,34 +165,28 @@
             "Fn::Base64": {
               "Fn::Join": ["\n",
                 [ "#!/bin/bash -xe ",
-                  "sudo echo SPRING_PROFILES_ACTIVE=prod | sudo tee -a /usr/lib/systemd/system/envVariables",
-                  "sudo echo SPRING_DATASOURCE_USERNAME=csye6225master |  sudo tee -a /usr/lib/systemd/system/envVariables",
-                  "sudo echo SPRING_DATASOURCE_PASSWORD=csye6225password |  sudo tee -a /usr/lib/systemd/system/envVariables",
-                  "sudo echo REGIONNAME=us-east-1 |  sudo tee -a /usr/lib/systemd/system/envVariables",
                   {
-                    "Fn::Join": [
-                      "",
-                      [
-                        "sudo echo SPRING_DATASOURCE_URL=jdbc:mysql://",
-                        {
-                          "Fn::GetAtt": [
-                            "RDSInstance",
-                            "Endpoint.Address"
-                          ]
-                        },
-                        ":3306/csye6225 | sudo tee -a /usr/lib/systemd/system/envVariables"
-                      ]
-                    ]
+                    "Fn::Join": ["",[
+                      "sudo bash -c 'echo -e \"--regionName=us-east-1",
+                      " --bucketName=",
+                      {"Ref":"Img"},
+                      " --spring.profile.active=prod",
+                      " --spring.datasource.username=csye6225master --spring.datasource.password=csye6225password",
+                      " --spring.datasource.url=jdbc:mysql://",
+                      {
+                        "Fn::GetAtt": [
+                          "RDSInstance",
+                          "Endpoint.Address"
+                        ]
+                      },
+                        ":3306/csye6225?serverTimezone=UTC&createDatabaseIfNotExist=true\" > /usr/lib/envVar.txt'"
+                    ]]
                   },
-                  {"Fn::Join": [
-                    "",
-                    ["sudo echo S3_BUCKET_NAME=",{"Ref":"Img"}, " | sudo tee -a /usr/lib/systemd/system/envVariables"]]} ,
-                    "sudo systemctl daemon-reload",
-                    "sudo systemctl restart tomcat.service",
-                    "cp /tmp/cloudwatchconfig.json /home/centos/",
-                    "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/home/centos/cloudwatchconfig.json -s",
-                    "sudo service amazon-cloudwatch-agent.service start"
-                    ] ]}}
+                "sudo cp /tmp/cloudwatchconfig.json /home/centos/",
+                "sudo cp /tmp/agent_config.service /etc/systemd/system/",
+                "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/home/centos/cloudwatchconfig.json -s",
+                "sudo service agent_config.service start"
+          ] ]}}
         }
       },
       "DynamoDBTable": {
