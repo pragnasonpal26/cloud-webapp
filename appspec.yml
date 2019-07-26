@@ -3,10 +3,21 @@ os: linux
 
 files:
   - source: ./webapp/target/webApplication-0.0.1-SNAPSHOT.jar
-    destination: /tmp/
+    destination: /tmp
+  - source: ./webapp/app_stop.sh
+    destincation: /home/centos
+  - source: ./webapp/install_dependencies.sh
+    destincation: /home/centos
+  - source: ./webapp/afterInstallation.sh
+    destincation: /home/centos
+  - source: ./webapp/applicationStart.sh
+    destincation: /home/centos
 
 hooks:
   ApplicationStop:
+   - location: ./app_stop.sh
+     timeout: 300
+     runas: root
   BeforeInstall:
    - location: ./install_dependencies.sh
      timeout: 300
