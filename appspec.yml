@@ -4,9 +4,9 @@ os: linux
 files:
   - source: ./webapp/target/webApplication-0.0.1-SNAPSHOT.jar
     destination: /tmp
-  - source: ./infrastructure/aws/codedeploy/app_stop.sh
+  - source: ./app_stop.sh
     destination: /home/centos
-  - source: ./infrastructure/aws/codedeploy/applicationStart.sh
+  - source: ./applicationStart.sh
     destination: /home/centos
 
 hooks:
