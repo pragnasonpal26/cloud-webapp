@@ -37,22 +37,25 @@ public class UserController {
 	@GetMapping("/")
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	public Timestamp login() {
-		logger.info("Inside_User login_");
-		statsDClient.incrementCounter("_User login_API");
+		logger.info("User login : start");
+		statsDClient.incrementCounter("endpoint.user.http.get");
 		Timestamp ts = new Timestamp(time);
+		logger.info("User login : Success!");
 		return ts;
 	}
 	
 	@PostMapping("/register")
 	@ResponseStatus(HttpStatus.CREATED)
 	public String create(@RequestBody User user) {
-		logger.info("Inside_User register_");
-		statsDClient.incrementCounter("_User register_API");
+		logger.info("User register : start");
+		statsDClient.incrementCounter("endpoint.user.http.post");
 		String message = userService.create(user);
 		if(message == "User already exists" || message == "Password length should be greater than 1" ) {
 			logger.error(message);
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
+			logger.info("User register : User exists!");
 		}
+		logger.info("User register : Succcess!");
 		return message;
 	}
 }
