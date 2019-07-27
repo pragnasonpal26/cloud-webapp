@@ -165,6 +165,9 @@
             "Fn::Base64": {
               "Fn::Join": ["\n",
                 [ "#!/bin/bash -xe ",
+                  "sudo cp /tmp/agent_config.service /etc/systemd/system/",
+                  "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/tmp/agent_config.json -s",
+                  "sudo service agent_config.service start",
                   {
                     "Fn::Join": ["",[
                       "sudo bash -c 'echo -e \"--regionName=us-east-1",
@@ -181,10 +184,7 @@
                       },
                         ":3306/csye6225?serverTimezone=UTC&createDatabaseIfNotExist=true\" > /usr/lib/envVar.txt'"
                     ]]
-                  },
-                "sudo cp /tmp/agent_config.service /etc/systemd/system/",
-                "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/home/centos/tmp/agent_config.json -s",
-                "sudo service agent_config.service start"
+                  }
           ] ]}}
         }
       },
