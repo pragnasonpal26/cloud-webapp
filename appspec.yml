@@ -11,10 +11,10 @@ files:
 
 hooks:
   ApplicationStop:
-    - location: ./infrastructure/aws/codedeploy/app_stop.sh
+    - location: ./app_stop.sh
       timeout: 180
       runas: centos
   ApplicationStart:
-    - location: ./infrastructure/aws/codedeploy/applicationStart.sh
+    - location: ./applicationStart.sh
       timeout: 180
       runas: centos
