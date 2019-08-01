@@ -451,6 +451,110 @@
           }
         }
       },
+      "SNSTopic": {
+        "Type": "AWS::SNS::Topic",
+        "Properties": {
+          "DisplayName":"passwordReset",
+          "TopicName": "password_reset"
+        }
+      },
+      "MySubscription":{
+        "Type":"AWS::SNS::Subscription",
+        "Properties":{
+           "Endpoint":{
+              "Fn::Join":[
+                 ":",
+                 [
+                    "arn:aws:lambda:us-east-1",
+                    {
+                       "Ref":"AccId"
+                    },
+                    "function:resetLambda"
+                 ]
+              ]
+           },
+           "Protocol":"lambda",
+           "TopicArn":{
+              "Ref":"myTopic"
+           }
+        }
+     },
+     "lambdaPermission":{
+        "Properties":{
+           "Action":"lambda:InvokeFunction",
+           "FunctionName":"resetLambda",
+           "Principal":"sns.amazonaws.com",
+           "SourceArn":{
+              "Fn::Join":[
+                 ":",
+                 [
+                    "arn:aws:lambda:us-east-1",
+                    {
+                       "Ref":"AccId"
+                    },
+                    "function:resetLambda"
+                 ]
+              ]
+           }
+        },
+        "Type":"AWS::Lambda::Permission"
+     },
+     "csye6225LambdaExecutionPolicy":{
+      "DependsOn":[
+         "csye6225LambdaExecutionRole"
+      ],
+      "Type":"AWS::IAM::Policy",
+      "Properties":{
+         "PolicyName":"MyLambdaToMakeLogsRolePolicy",
+         "Roles":[
+            {
+               "Ref":"csye6225LambdaExecutionRole"
+            }
+         ],
+         "PolicyDocument":{
+            "Version":"2012-10-17",
+            "Statement":[
+               {
+                  "Effect":"Allow",
+                  "Action":[
+                     "logs:*"
+                  ],
+                  "Resource":[
+                     "arn:aws:logs:*:*:*"
+                  ]
+               }
+            ]
+         }
+      }
+   },
+   "csye6225LambdaExecutionRole":{
+      "Type":"AWS::IAM::Role",
+      "Properties":{
+         "RoleName":"csye6225LambdaExecutionRole",
+         "ManagedPolicyArns":[
+            "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+            "arn:aws:iam::aws:policy/AmazonSESFullAccess",
+            "arn:aws:iam::aws:policy/service-role/AWSLambdaDynamoDBExecutionRole",
+            "arn:aws:iam::aws:policy/AmazonSNSFullAccess",
+            "arn:aws:iam::aws:policy/AWSLambdaFullAccess"
+         ],
+         "AssumeRolePolicyDocument":{
+            "Version":"2012-10-17",
+            "Statement":[
+               {
+                  "Effect":"Allow",
+                  "Principal":{
+                     "Service":[
+                        "lambda.amazonaws.com"
+                     ]
+                  },
+                  "Action":[
+                     "sts:AssumeRole"
+                  ]
+               }
+            ]
+         }
+      },
       "CodeDeployApplication": {
         "Type": "AWS::CodeDeploy::Application",
         "Properties": {
@@ -493,3 +597,4 @@
       }
     }
   }
+}
