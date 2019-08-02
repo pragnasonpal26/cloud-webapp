@@ -47,7 +47,7 @@ public class UserController {
 		if(message == "User already exists" || message == "Password length should be greater than 1" ) {
 			logger.error(message);
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
-			//logger.info("User register : User exists!");
+
 		}
 		logger.info("User register : Succcess!");
 		return message;
