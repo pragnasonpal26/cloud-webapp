@@ -38,7 +38,7 @@
       "LambdaBucketName":{
         "Type":"String"
       },
-      "SystemEmail":{
+      "DomainName":{
         "Type":"String"
       }
     },
@@ -216,7 +216,7 @@
             "WriteCapacityUnits": "5"
           },
           "TimeToLiveSpecification": {
-            "AttributeName": "TimeToLive",
+            "AttributeName": "ExpirationTime",
             "Enabled": "TRUE"
           }
         }
@@ -560,7 +560,16 @@
         "Type": "AWS::Lambda::Function",
         "Properties": {
             "FunctionName" : {"Ref": "AWS::StackName"},
-            "Environment" : { "Variables" : {"SYSTEM_EMAIL" : {"Ref":"SystemEmail"}}},
+            "Environment" : { "Variables" : {
+              "SYSTEM_EMAIL" : {
+                "Fn::Join": [
+                  "",
+                  [
+                    "admin@", {"Ref":"DomainName"}
+                  ]
+                ]
+              },
+              "DOMAIN_NAME" : {"Ref":"DomainName"}}},
             "Handler": "LogEvent::handleRequest",
             "Role": { "Fn::GetAtt" : ["lambdasnsexecution", "Arn"] },
             "Code": {
