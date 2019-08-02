@@ -59,7 +59,8 @@
            "Path": "/",
            "ManagedPolicyArns" : [ 
              "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
-              "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"],
+              "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+            "arn:aws:iam::aws:policy/AmazonSNSFullAccess"],
            "Policies": [
             {
               "PolicyName": "s3deployrdsfull",
@@ -555,14 +556,11 @@
           } ]
         }
       },
-      "LambdaEnv":{
-        "Type": "AWS::Lambda::Function Environment",
-        "Variables" : {"SYSTEM_EMAIL" : {"Ref":"SystemEmail"}}
-      },
       "Lambda": {
         "Type": "AWS::Lambda::Function",
         "Properties": {
             "FunctionName" : {"Ref": "AWS::StackName"},
+            "Environment" : { "Variables" : {"SYSTEM_EMAIL" : {"Ref":"SystemEmail"}}},
             "Handler": "LogEvent::handleRequest",
             "Role": { "Fn::GetAtt" : ["lambdasnsexecution", "Arn"] },
             "Code": {
@@ -574,7 +572,7 @@
             "MemorySize":"512"
         }
     },
-      "CodeDeployApplication1": {
+      "CodeDeployApplication": {
         "Type": "AWS::CodeDeploy::Application",
         "Properties": {
           "ApplicationName": "csye6225-webapp",
@@ -612,6 +610,16 @@
               "DEPLOYMENT_FAILURE"
             ]
           }
+        }
+      },
+      "MySNSTopic" : {
+        "Type" : "AWS::SNS::Topic",
+        "Properties" : {
+          "Subscription" : [{
+            "Endpoint" : {"Fn::GetAtt" : [ "Lambda", "Arn" ]} ,
+            "Protocol" : "LAMBDA"
+          }],
+          "TopicName" : "password_reset"
         }
       }
     }
