@@ -34,7 +34,13 @@
       },
       "Img":{
         "Type":"String"
-      }
+      },
+      "LambdaBucketName":{
+          "Type":"String"
+      	},
+          "SystemEmail":{
+             "Type":"String"
+         }
     },
     "Resources": {
       "csye6225ec2Role": {
@@ -53,7 +59,8 @@
            "Path": "/",
            "ManagedPolicyArns" : [ 
              "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
-              "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"],
+              "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+              "arn:aws:iam::aws:policy/AmazonSNSFullAccess"],
            "Policies": [
             {
               "PolicyName": "s3deployrdsfull",
@@ -191,7 +198,7 @@
       "DynamoDBTable": {
         "Type": "AWS::DynamoDB::Table",
         "Properties": {
-          "TableName": "csye6225",
+          "TableName": "Users",
           "AttributeDefinitions": [
             {
               "AttributeName": "id",
@@ -207,6 +214,10 @@
           "ProvisionedThroughput": {
             "ReadCapacityUnits": "5",
             "WriteCapacityUnits": "5"
+          },
+          "TimeToLiveSpecification": {
+            "AttributeName": "TimeToLive",
+            "Enabled": "TRUE"
           }
         }
       },
@@ -272,7 +283,7 @@
                   "s3:Get*",
                   "s3:List*"
                 ],
-                "Resource": {
+                "Resource": [{
                   "Fn::Join": [
                     "",
                     [
@@ -282,7 +293,30 @@
                       }
                     ]
                   ]
-                }
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "LambdaBucketName"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "LambdaBucketName"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }]
               }
             ]
           },
@@ -434,7 +468,7 @@
                 "Action": [
                   "s3:PutObject"
                 ],
-                "Resource": {
+                "Resource": [{
                   "Fn::Join": [
                     "",
                     [
@@ -445,116 +479,99 @@
                       "/*"
                     ]
                   ]
-                }
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "LambdaBucketName"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }]
               }
             ]
           }
         }
       },
-      "SNSTopic": {
-        "Type": "AWS::SNS::Topic",
+      "CircleCILambda":{
+        "Type": "AWS::IAM::Policy",
         "Properties": {
-          "DisplayName":"passwordReset",
-          "TopicName": "password_reset"
+          "PolicyName": "CircleCI-Lambda",
+          "Users": [
+            "circleci"
+          ],
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "lambda:GetFunction",
+                  "lambda:GetFunctionConfiguration",
+                  "lambda:ListFunctions",
+                  "lambda:UpdateFunctionCode",
+                  "lambda:UpdateFunctionConfiguration"
+              ],
+                "Resource": "*"
+              }
+            ]
+          }
         }
       },
-      "MySubscription":{
-        "Type":"AWS::SNS::Subscription",
-        "Properties":{
-           "Endpoint":{
-              "Fn::Join":[
-                 ":",
-                 [
-                    "arn:aws:lambda:us-east-1",
-                    {
-                       "Ref":"AccId"
-                    },
-                    "function:resetLambda"
-                 ]
-              ]
-           },
-           "Protocol":"lambda",
-           "TopicArn":{
-              "Ref":"SNSTopic"
-           }
-        }
-     },
-     "lambdaPermission":{
-        "Properties":{
-           "Action":"lambda:InvokeFunction",
-           "FunctionName":"resetLambda",
-           "Principal":"sns.amazonaws.com",
-           "SourceArn":{
-              "Fn::Join":[
-                 ":",
-                 [
-                    "arn:aws:lambda:us-east-1",
-                    {
-                       "Ref":"AccId"
-                    },
-                    "function:resetLambda"
-                 ]
-              ]
-           }
-        },
-        "Type":"AWS::Lambda::Permission"
-     },
-     "csye6225LambdaExecutionPolicy":{
-      "DependsOn":[
-         "csye6225LambdaExecutionRole"
-      ],
-      "Type":"AWS::IAM::Policy",
-      "Properties":{
-         "PolicyName":"MyLambdaToMakeLogsRolePolicy",
-         "Roles":[
-            {
-               "Ref":"csye6225LambdaExecutionRole"
+      "lambdasnsexecution": {
+        "Type": "AWS::IAM::Role",
+        "Properties": {
+        "AssumeRolePolicyDocument": {
+            "Version" : "2012-10-17",
+            "Statement": [ {
+                "Effect": "Allow",
+                 "Principal": {
+                    "Service": [ "lambda.amazonaws.com" ]
+                },
+             "Action": [ "sts:AssumeRole" ]
+             } ]
+         },
+         "RoleName":"lambdasnsexecution",
+         "Path": "/",
+         "Policies": [ {
+            "PolicyName": "lambda-sns-execution",
+            "PolicyDocument": {
+                "Version" : "2012-10-17",
+                "Statement": [ {
+                    "Effect": "Allow",
+                    "Action": [
+                        "logs:CreateLogGroup",
+                        "logs:CreateLogStream",
+                        "logs:PutLogEvents",
+                        "DynamoDB:*",
+                        "ses:*"
+                    ],
+                    "Resource": "*"
+                } ]
             }
-         ],
-         "PolicyDocument":{
-            "Version":"2012-10-17",
-            "Statement":[
-               {
-                  "Effect":"Allow",
-                  "Action":[
-                     "logs:*"
-                  ],
-                  "Resource":[
-                     "arn:aws:logs:*:*:*"
-                  ]
-               }
-            ]
-         }
-      }
-   },
-   "csye6225LambdaExecutionRole":{
-      "Type":"AWS::IAM::Role",
-      "Properties":{
-         "RoleName":"csye6225LambdaExecutionRole",
-         "ManagedPolicyArns":[
-            "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-            "arn:aws:iam::aws:policy/AmazonSESFullAccess",
-            "arn:aws:iam::aws:policy/service-role/AWSLambdaDynamoDBExecutionRole",
-            "arn:aws:iam::aws:policy/AmazonSNSFullAccess",
-            "arn:aws:iam::aws:policy/AWSLambdaFullAccess"
-         ],
-         "AssumeRolePolicyDocument":{
-            "Version":"2012-10-17",
-            "Statement":[
-               {
-                  "Effect":"Allow",
-                  "Principal":{
-                     "Service":[
-                        "lambda.amazonaws.com"
-                     ]
-                  },
-                  "Action":[
-                     "sts:AssumeRole"
-                  ]
-               }
-            ]
-         }
+          } ]
+        }
       },
+      "Lambda": {
+        "Type": "AWS::Lambda::Function",
+        "Properties": {
+            "FunctionName" : {"Ref": "AWS::StackName"},
+            "Environment" : { "Variables" : {"SYSTEM_EMAIL" : {"Ref":"SystemEmail"}}},
+            "Handler": "LogEvent::handleRequest",
+            "Role": { "Fn::GetAtt" : ["lambdasnsexecution", "Arn"] },
+            "Code": {
+                "S3Bucket": {"Ref": "LambdaBucketName"},
+                "S3Key": "com.neu.csye6225.lambda-0.0.1.zip"
+            },
+            "Runtime": "java8",
+            "Timeout": "25",
+            "MemorySize":"512"
+        }
+    },
       "CodeDeployApplication": {
         "Type": "AWS::CodeDeploy::Application",
         "Properties": {
@@ -594,7 +611,16 @@
             ]
           }
         }
+      },
+      "MySNSTopic" : {
+        "Type" : "AWS::SNS::Topic",
+        "Properties" : {
+          "Subscription" : [{
+            "Endpoint" : {"Fn::GetAtt" : [ "Lambda", "Arn" ]} ,
+            "Protocol" : "LAMBDA"
+          }],
+          "TopicName" : "password_reset"
+        }
       }
     }
   }
-}
