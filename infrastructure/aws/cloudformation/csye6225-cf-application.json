@@ -555,14 +555,11 @@
           } ]
         }
       },
-      "LambdaEnv":{
-        "Type": "AWS::Lambda::Function Environment",
-        "Variables" : {"SYSTEM_EMAIL" : {"Ref":"SystemEmail"}}
-      },
       "Lambda": {
         "Type": "AWS::Lambda::Function",
         "Properties": {
             "FunctionName" : {"Ref": "AWS::StackName"},
+            "Environment" : { "Variables" : {"SYSTEM_EMAIL" : {"Ref":"SystemEmail"}}},
             "Handler": "LogEvent::handleRequest",
             "Role": { "Fn::GetAtt" : ["lambdasnsexecution", "Arn"] },
             "Code": {
@@ -574,7 +571,7 @@
             "MemorySize":"512"
         }
     },
-      "CodeDeployApplication1": {
+      "CodeDeployApplication": {
         "Type": "AWS::CodeDeploy::Application",
         "Properties": {
           "ApplicationName": "csye6225-webapp",
