@@ -475,7 +475,7 @@
            },
            "Protocol":"lambda",
            "TopicArn":{
-              "Ref":"myTopic"
+              "Ref":"SNSTopic"
            }
         }
      },
