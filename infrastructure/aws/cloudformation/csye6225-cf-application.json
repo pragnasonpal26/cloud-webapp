@@ -34,6 +34,12 @@
       },
       "Img":{
         "Type":"String"
+      },
+      "LambdaBucketName":{
+        "Type":"String"
+      },
+      "SystemEmail":{
+        "Type":"String"
       }
     },
     "Resources": {
@@ -191,7 +197,7 @@
       "DynamoDBTable": {
         "Type": "AWS::DynamoDB::Table",
         "Properties": {
-          "TableName": "csye6225",
+          "TableName": "Users",
           "AttributeDefinitions": [
             {
               "AttributeName": "id",
@@ -207,6 +213,10 @@
           "ProvisionedThroughput": {
             "ReadCapacityUnits": "5",
             "WriteCapacityUnits": "5"
+          },
+          "TimeToLiveSpecification": {
+            "AttributeName": "TimeToLive",
+            "Enabled": "TRUE"
           }
         }
       },
@@ -272,7 +282,7 @@
                   "s3:Get*",
                   "s3:List*"
                 ],
-                "Resource": {
+                "Resource": [{
                   "Fn::Join": [
                     "",
                     [
@@ -282,7 +292,30 @@
                       }
                     ]
                   ]
-                }
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "LambdaBucketName"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "LambdaBucketName"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }]
               }
             ]
           },
@@ -434,7 +467,7 @@
                 "Action": [
                   "s3:PutObject"
                 ],
-                "Resource": {
+                "Resource": [{
                   "Fn::Join": [
                     "",
                     [
@@ -445,13 +478,103 @@
                       "/*"
                     ]
                   ]
-                }
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "LambdaBucketName"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }]
               }
             ]
           }
         }
       },
-      "CodeDeployApplication": {
+      "CircleCILambda":{
+        "Type": "AWS::IAM::Policy",
+        "Properties": {
+          "PolicyName": "CircleCI-Lambda",
+          "Users": [
+            "circleci"
+          ],
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "lambda:GetFunction",
+                  "lambda:GetFunctionConfiguration",
+                  "lambda:ListFunctions",
+                  "lambda:UpdateFunctionCode",
+                  "lambda:UpdateFunctionConfiguration"
+              ],
+                "Resource": "*"
+              }
+            ]
+          }
+        }
+      },
+      "lambdasnsexecution": {
+        "Type": "AWS::IAM::Role",
+        "Properties": {
+        "AssumeRolePolicyDocument": {
+            "Version" : "2012-10-17",
+            "Statement": [ {
+                "Effect": "Allow",
+                 "Principal": {
+                    "Service": [ "lambda.amazonaws.com" ]
+                },
+             "Action": [ "sts:AssumeRole" ]
+             } ]
+         },
+         "RoleName":"lambdasnsexecution",
+         "Path": "/",
+         "Policies": [ {
+            "PolicyName": "lambda-sns-execution",
+            "PolicyDocument": {
+                "Version" : "2012-10-17",
+                "Statement": [ {
+                    "Effect": "Allow",
+                    "Action": [
+                        "logs:CreateLogGroup",
+                        "logs:CreateLogStream",
+                        "logs:PutLogEvents",
+                        "DynamoDB:*",
+                        "ses:*"
+                    ],
+                    "Resource": "*"
+                } ]
+            }
+          } ]
+        }
+      },
+      "LambdaEnv":{
+        "Type": "AWS::Lambda::Function Environment",
+        "Variables" : {"SYSTEM_EMAIL" : {"Ref":"SystemEmail"}}
+      },
+      "Lambda": {
+        "Type": "AWS::Lambda::Function",
+        "Properties": {
+            "FunctionName" : {"Ref": "AWS::StackName"},
+            "Handler": "LogEvent::handleRequest",
+            "Role": { "Fn::GetAtt" : ["lambdasnsexecution", "Arn"] },
+            "Code": {
+                "S3Bucket": {"Ref": "LambdaBucketName"},
+                "S3Key": "com.neu.csye6225.lambda-0.0.1.zip"
+            },
+            "Runtime": "java8",
+            "Timeout": "25",
+            "MemorySize":"512"
+        }
+    },
+      "CodeDeployApplication1": {
         "Type": "AWS::CodeDeploy::Application",
         "Properties": {
           "ApplicationName": "csye6225-webapp",
