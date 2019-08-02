@@ -13,6 +13,12 @@ read BUCKET_NAME
 echo "Enter your Image bucket name "
 read IMG_BUCKET_NAME
 
+echo "Enter your Lambda Revision bucket name "
+read LAMBDA_BUCKET_NAME
+
+echo "Enter your System email id "
+read SYSTEM_EMAIL
+
 echo "Enter your AWS Acc ID "
 read AccId
 
@@ -38,6 +44,7 @@ stackId=$(aws cloudformation create-stack --stack-name $name --capabilities CAPA
 "ParameterKey=webAppSubnetID,ParameterValue=$webAppSubnetID" "ParameterKey=dbSubnetID,ParameterValue=$dbSubnetID" \
 "ParameterKey=SecurityGroupID,ParameterValue=$GROUPID" "ParameterKey=BucketName,ParameterValue=$BUCKET_NAME" \
 "ParameterKey=AccId,ParameterValue=$AccId" "ParameterKey=Img,ParameterValue=$IMG_BUCKET_NAME" \
+"ParameterKey=LambdaBucketName,ParameterValue=$LAMBDA_BUCKET_NAME" "ParameterKey=SystemEmail,ParameterValue=$SYSTEM_EMAIL" \
 --query [StackId] --output text)
 
 echo "Stack Id - "
