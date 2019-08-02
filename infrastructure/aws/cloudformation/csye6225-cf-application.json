@@ -59,7 +59,8 @@
            "Path": "/",
            "ManagedPolicyArns" : [ 
              "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
-              "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"],
+              "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+            "arn:aws:iam::aws:policy/AmazonSNSFullAccess"],
            "Policies": [
             {
               "PolicyName": "s3deployrdsfull",
@@ -609,6 +610,16 @@
               "DEPLOYMENT_FAILURE"
             ]
           }
+        }
+      },
+      "MySNSTopic" : {
+        "Type" : "AWS::SNS::Topic",
+        "Properties" : {
+          "Subscription" : [{
+            "Endpoint" : {"Fn::GetAtt" : [ "Lambda", "Arn" ]} ,
+            "Protocol" : "LAMBDA"
+          }],
+          "TopicName" : "password_reset"
         }
       }
     }
