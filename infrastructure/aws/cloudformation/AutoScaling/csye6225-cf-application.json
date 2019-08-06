@@ -1,0 +1,722 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Cloud Formation template for application stack creation - csye6225 summer 19",
+  "Parameters": {
+    "stackName": {
+      "Type": "String"
+    },
+    "KeyName": {
+      "Type": "String"
+    },
+    "ImageId": {
+      "Type": "String"
+    },
+    "InstanceType": {
+      "Type": "String"
+    },
+    "VPCID": {
+      "Type": "String"
+    },
+    "webAppSubnetID": {
+      "Type": "String"
+    },
+    "dbSubnetID": {
+      "Type": "String"
+    },
+    "SecurityGroupID": {
+      "Type": "String"
+    },
+    "BucketName":{
+      "Type":"String"
+    },
+    "AccId":{
+      "Type":"String"
+    },
+    "Img":{
+      "Type":"String"
+    },
+    "LambdaBucketName":{
+      "Type":"String"
+    },
+    "DomainName":{
+      "Type":"String"
+    }
+  },
+  "Resources": {
+    "csye6225ec2Role": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+         "AssumeRolePolicyDocument": {
+            "Version" : "2012-10-17",
+            "Statement": [ {
+               "Effect": "Allow",
+               "Principal": {
+                  "Service": [ "ec2.amazonaws.com" ]
+               },
+               "Action": [ "sts:AssumeRole" ]
+            } ]
+          },
+         "Path": "/",
+         "ManagedPolicyArns" : [ 
+           "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
+            "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+          "arn:aws:iam::aws:policy/AmazonSNSFullAccess"],
+         "Policies": [
+          {
+            "PolicyName": "s3deployrdsfull",
+            "PolicyDocument": {
+               "Version" : "2012-10-17",
+               "Statement": [ {
+                  "Effect": "Allow",
+                  "Action": [
+                     "s3:*",
+                     "codedeploy:*",
+                     "rds:*",
+                     "ec2:DescribeAccountAttributes",
+                     "ec2:DescribeAvailabilityZones",
+                     "ec2:DescribeInternetGateways",
+                     "ec2:DescribeSecurityGroups",
+                     "ec2:DescribeSubnets",
+                     "ec2:DescribeVpcAttribute",
+                     "ec2:DescribeVpcs"
+                  ],
+                  "Resource": "*"
+                } ]
+            }
+          }
+          ]
+      }
+  },
+  "EC2InstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+         "Path": "/",
+         "Roles": [ {
+            "Ref": "csye6225ec2Role"
+         } ]
+      }
+  },
+    "DBSubnetGroup": {
+      "Type": "AWS::RDS::DBSubnetGroup",
+      "Properties": {
+        "DBSubnetGroupDescription": "description",
+        "SubnetIds": [
+          {
+            "Ref": "webAppSubnetID"
+          },
+          {
+            "Ref": "dbSubnetID"
+          }
+        ]
+      }
+    },
+    "RDSSecurityGroup": {
+      "Type": "AWS::RDS::DBSecurityGroup",
+      "Properties": {
+        "GroupDescription": "security group for rds",
+        "DBSecurityGroupIngress": {
+          "EC2SecurityGroupId": {
+            "Ref": "SecurityGroupID"
+          }
+        },
+        "EC2VpcId": {
+          "Ref": "VPCID"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "csye6225-rds"
+          }
+        ]
+      }
+    },
+    "asg_launch_config" : {
+      "Type" : "AWS::AutoScaling::LaunchConfiguration",
+      "Properties" : {
+         "AssociatePublicIpAddress" : true,
+         "BlockDeviceMappings" : [
+          {
+            "DeviceName": "/dev/sda1",
+            "Ebs": {
+              "VolumeType": "gp2",
+              "VolumeSize": "16"
+            }
+          }
+        ],  
+         "IamInstanceProfile" : {
+          "Ref": "EC2InstanceProfile"
+        },
+         "ImageId" : {"Ref" : "ImageId"},
+         
+         
+         "InstanceType" : "t2.micro",
+         
+         "KeyName": {
+          "Ref": "KeyName"
+        },
+         
+         "SecurityGroups" : [
+          {
+            "Ref": "SecurityGroupID"
+          }
+        ],
+         "UserData" : {
+          "Fn::Base64": {
+            "Fn::Join": ["\n",
+              [ "#!/bin/bash -xe ",
+                "sudo cp /tmp/agent_config.service /etc/systemd/system/",
+                "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/tmp/agent_config.json -s",
+                "sudo service agent_config.service start",
+                {
+                  "Fn::Join": ["",[
+                    "sudo bash -c 'echo -e \"--regionName=us-east-1",
+                    " --bucketName=",
+                    {"Ref":"Img"},
+                    " --spring.profile.active=prod",
+                    " --spring.datasource.username=csye6225master --spring.datasource.password=csye6225password",
+                    " --spring.datasource.url=jdbc:mysql://",
+                    {
+                      "Fn::GetAtt": [
+                        "RDSInstance",
+                        "Endpoint.Address"
+                      ]
+                    },
+                      ":3306/csye6225?serverTimezone=UTC&createDatabaseIfNotExist=true\" > /usr/lib/envVar.txt'"
+                  ]]
+                }
+        ] ]}}
+      }
+    },
+    "ASGroup" : {
+      "Type" : "AWS::AutoScaling::AutoScalingGroup",
+      "Properties" : {
+         "AutoScalingGroupName" : "csye-6225-asg",
+         "Cooldown" : "60",
+         "DesiredCapacity" : "3",
+         "LaunchConfigurationName" : {"Ref" : "asg_launch_config"},
+         "TargetGroupARNs" : [ { "Ref" : "ELBTargetGroup" } ],
+         "MaxSize" : "7",
+         "MinSize" : "3",
+         "Tags" : [
+          {
+            "Key": "Name",
+            "Value": "EC2Instance",
+            "PropagateAtLaunch" : true
+          }
+        ],
+         "VPCZoneIdentifier" : [ {"Ref": "webAppSubnetID"} ]
+      }
+   },
+
+  "WebServerScaleUpPolicy": {
+    "Type": "AWS::AutoScaling::ScalingPolicy",
+    "Properties": {
+      "AdjustmentType": "ChangeInCapacity",
+      "AutoScalingGroupName": {
+        "Ref": "WebServerGroup"
+      },
+      "Cooldown": "60",
+      "ScalingAdjustment": "1"
+    }
+  },
+  "WebServerScaleDownPolicy": {
+    "Type": "AWS::AutoScaling::ScalingPolicy",
+    "Properties": {
+      "AdjustmentType": "ChangeInCapacity",
+      "AutoScalingGroupName": {
+        "Ref": "WebServerGroup"
+      },
+      "Cooldown": "60",
+      "ScalingAdjustment": "-1"
+    }
+  },
+  "CPUAlarmHigh": {
+    "Type": "AWS::CloudWatch::Alarm",
+    "Properties": {
+      "AlarmDescription": "Scale-up if CPU > 90% for 10 minutes",
+      "MetricName": "CPUUtilization",
+      "Namespace": "AWS/EC2",
+      "Statistic": "Average",
+      "Period": "300",
+      "EvaluationPeriods": "2",
+      "Threshold": "90",
+      "AlarmActions": [
+        {
+          "Ref": "WebServerScaleUpPolicy"
+        }
+      ],
+      "Dimensions": [
+        {
+          "Name": "AutoScalingGroupName",
+          "Value": {
+            "Ref": "WebServerGroup"
+          }
+        }
+      ],
+      "ComparisonOperator": "GreaterThanThreshold"
+    }
+  },
+  "CPUAlarmLow": {
+    "Type": "AWS::CloudWatch::Alarm",
+    "Properties": {
+      "AlarmDescription": "Scale-down if CPU < 70% for 10 minutes",
+      "MetricName": "CPUUtilization",
+      "Namespace": "AWS/EC2",
+      "Statistic": "Average",
+      "Period": "300",
+      "EvaluationPeriods": "2",
+      "Threshold": "70",
+      "AlarmActions": [
+        {
+          "Ref": "WebServerScaleDownPolicy"
+        }
+      ],
+      "Dimensions": [
+        {
+          "Name": "AutoScalingGroupName",
+          "Value": {
+            "Ref": "WebServerGroup"
+          }
+        }
+      ],
+      "ComparisonOperator": "LessThanThreshold"
+    }
+  },
+    "DynamoDBTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "Users",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "id",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "id",
+            "KeyType": "HASH"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": "5",
+          "WriteCapacityUnits": "5"
+        },
+        "TimeToLiveSpecification": {
+          "AttributeName": "ExpirationTime",
+          "Enabled": "TRUE"
+        }
+      }
+    },
+    "RDSInstance": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "DBName": "csye6225",
+        "DBInstanceClass": "db.t2.medium",
+        "AllocatedStorage": "20",
+        "MultiAZ": "false",
+        "Engine": "MySQL",
+        "EngineVersion": "5.6.37",
+        "StorageType": "gp2",
+        "MasterUsername": "csye6225master",
+        "MasterUserPassword": "csye6225password",
+        "DBInstanceIdentifier": "csye6225-su19",
+        "DBSecurityGroups": [
+          {
+            "Ref": "RDSSecurityGroup"
+          }
+        ],
+        "PubliclyAccessible": "true",
+        "DBSubnetGroupName": {
+          "Ref": "DBSubnetGroup"
+        }
+      }
+    },
+    "CodeDeployEC2ServiceRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/"
+      }
+    },
+    "CodeDeployEC2S3Policy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "CodeDeploy-EC2-S3",
+        "Users": [
+          "circleci"
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:Get*",
+                "s3:List*"
+              ],
+              "Resource": [{
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "BucketName"
+                    }
+                  ]
+                ]
+              },
+              {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "LambdaBucketName"
+                    }
+                  ]
+                ]
+              },
+              {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "LambdaBucketName"
+                    },
+                    "/*"
+                  ]
+                ]
+              }]
+            }
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "CodeDeployEC2ServiceRole"
+          }
+        ]
+      }
+    },
+    "CodeDeployEC2ServiceRoleInstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          {
+            "Ref": "CodeDeployEC2ServiceRole"
+          }
+        ]
+      }
+    },
+    "CodeDeployServiceRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
+        ],
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "codedeploy.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/"
+      }
+    },
+    "circleCIcodedeployPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "circleCI-Code-Deploy",
+        "Users": [
+          "circleci"
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "codedeploy:RegisterApplicationRevision",
+                "codedeploy:GetApplicationRevision"
+              ],
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    ":",
+                    [
+                      "arn:aws:codedeploy:us-east-1",
+                      {
+                        "Ref": "AccId"
+                      },
+                      "application",
+                      "csye6225-webapp"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "codedeploy:CreateDeployment",
+                "codedeploy:GetDeployment"
+              ],
+              "Resource": [
+                "*"
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "codedeploy:GetDeploymentConfig"
+              ],
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    ":",
+                    [
+                      "arn:aws:codedeploy:us-east-1",
+                      {
+                        "Ref": "AccId"
+                      },
+                      "deploymentconfig:CodeDeployDefault.OneAtATime"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    ":",
+                    [
+                      "arn:aws:codedeploy:us-east-1",
+                      {
+                        "Ref": "AccId"
+                      },
+                      "deploymentconfig:CodeDeployDefault.HalfAtATime"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    ":",
+                    [
+                      "arn:aws:codedeploy:us-east-1:",
+                      {
+                        "Ref": "AccId"
+                      },
+                      "deploymentconfig:CodeDeployDefault.AllAtOnce"
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "circleCIuploadToS3Policy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "CircleCI-Upload-To-S3",
+        "Users": [
+          "circleci"
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:PutObject"
+              ],
+              "Resource": [{
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "BucketName"
+                    },
+                    "/*"
+                  ]
+                ]
+              },
+              {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "LambdaBucketName"
+                    },
+                    "/*"
+                  ]
+                ]
+              }]
+            }
+          ]
+        }
+      }
+    },
+    "CircleCILambda":{
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "CircleCI-Lambda",
+        "Users": [
+          "circleci"
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "lambda:GetFunction",
+                "lambda:GetFunctionConfiguration",
+                "lambda:ListFunctions",
+                "lambda:UpdateFunctionCode",
+                "lambda:UpdateFunctionConfiguration"
+            ],
+              "Resource": "*"
+            }
+          ]
+        }
+      }
+    },
+    "lambdasnsexecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+      "AssumeRolePolicyDocument": {
+          "Version" : "2012-10-17",
+          "Statement": [ {
+              "Effect": "Allow",
+               "Principal": {
+                  "Service": [ "lambda.amazonaws.com" ]
+              },
+           "Action": [ "sts:AssumeRole" ]
+           } ]
+       },
+       "RoleName":"lambdasnsexecution",
+       "Path": "/",
+       "Policies": [ {
+          "PolicyName": "lambda-sns-execution",
+          "PolicyDocument": {
+              "Version" : "2012-10-17",
+              "Statement": [ {
+                  "Effect": "Allow",
+                  "Action": [
+                      "logs:CreateLogGroup",
+                      "logs:CreateLogStream",
+                      "logs:PutLogEvents",
+                      "DynamoDB:*",
+                      "ses:*"
+                  ],
+                  "Resource": "*"
+              } ]
+          }
+        } ]
+      }
+    },
+    "Lambda": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+          "FunctionName" : {"Ref": "AWS::StackName"},
+          "Environment" : { "Variables" : {
+            "SYSTEM_EMAIL" : {
+              "Fn::Join": [
+                "",
+                [
+                  "admin@", {"Ref":"DomainName"}
+                ]
+              ]
+            },
+            "DOMAIN_NAME" : {"Ref":"DomainName"}}},
+          "Handler": "LogEvent::handleRequest",
+          "Role": { "Fn::GetAtt" : ["lambdasnsexecution", "Arn"] },
+          "Code": {
+              "S3Bucket": {"Ref": "LambdaBucketName"},
+              "S3Key": "com.neu.csye6225.lambda-0.0.1.zip"
+          },
+          "Runtime": "java8",
+          "Timeout": "25",
+          "MemorySize":"512"
+      }
+  },
+    "CodeDeployApplication": {
+      "Type": "AWS::CodeDeploy::Application",
+      "Properties": {
+        "ApplicationName": "csye6225-webapp",
+        "ComputePlatform": "Server"
+      }
+    },
+    "DeploymentGroup": {
+      "Type": "AWS::CodeDeploy::DeploymentGroup",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "CodeDeployApplication"
+        },
+        "DeploymentConfigName": "CodeDeployDefault.AllAtOnce",
+        "DeploymentGroupName": "csye6225-webapp-deployment",
+        "DeploymentStyle": {
+          "DeploymentType": "IN_PLACE",
+          "DeploymentOption": "WITHOUT_TRAFFIC_CONTROL"
+        },
+        "Ec2TagFilters": [
+          {
+            "Type": "KEY_AND_VALUE",
+            "Key": "aws:cloudformation:logical-id",
+            "Value": "Ec2Instance"
+          }
+        ],
+        "ServiceRoleArn": {
+          "Fn::GetAtt": [
+            "CodeDeployServiceRole",
+            "Arn"
+          ]
+        },
+        "AutoRollbackConfiguration": {
+          "Enabled": "true",
+          "Events": [
+            "DEPLOYMENT_FAILURE"
+          ]
+        }
+      }
+    },
+    "MySNSTopic" : {
+      "Type" : "AWS::SNS::Topic",
+      "Properties" : {
+        "Subscription" : [{
+          "Endpoint" : {"Fn::GetAtt" : [ "Lambda", "Arn" ]} ,
+          "Protocol" : "LAMBDA"
+        }],
+        "TopicName" : "password_reset"
+      }
+    }
+  }
+}

@@ -145,31 +145,21 @@
               "GroupDescription": "security group for ec2",
               "VpcId" : { "Ref" : "myVPC" },
               "SecurityGroupIngress": [
-                  {
-                      "IpProtocol": "tcp",
-                      "FromPort": "80",
-                      "ToPort": "80",
-                      "CidrIp": "0.0.0.0/0"
+                {
+                    "SourceSecurityGroupId": {
+                      "Ref": "elbSecurityGroup"
+                    },
+                    "FromPort": 8080,
+                    "IpProtocol": "tcp",
+                    "ToPort": 8080
                   },
                   {
-                      "IpProtocol": "tcp",
-                      "FromPort": "22",
-                      "ToPort": "22",
-                      "CidrIp": "0.0.0.0/0"
-                  },
-                  {
-                      "IpProtocol": "tcp",
-                      "FromPort": "443",
-                      "ToPort": "443",
-                      "CidrIp": "0.0.0.0/0"
-                  },
-                  {
-                      "IpProtocol": "tcp",
-                      "FromPort": "8080",
-                      "ToPort": "8080",
-                      "CidrIp": "0.0.0.0/0"
+                    "CidrIp": "0.0.0.0/0",
+                    "FromPort": 22,
+                    "IpProtocol": "tcp",
+                    "ToPort": 22
                   }
-              ],
+                ],
               "Tags": [
                   {
                       "Key": "Name",
@@ -177,6 +167,38 @@
                   }
               ]
           }
+      },
+      "elbSecurityGroup": {
+        "Type": "AWS::EC2::SecurityGroup",
+        "Properties": {
+          "GroupName": {
+            "Ref": "elbSecurityGroupNameTag"
+          },
+          "GroupDescription": "Security tag for ELB",
+          "SecurityGroupIngress": [
+            {
+              "CidrIp": "0.0.0.0/0",
+              "FromPort": 22,
+              "IpProtocol": "tcp",
+              "ToPort": 22
+            },
+            {
+              "CidrIp": "0.0.0.0/0",
+              "FromPort": 80,
+              "IpProtocol": "tcp",
+              "ToPort": 80
+            },
+            {
+              "CidrIp": "0.0.0.0/0",
+              "FromPort": 443,
+              "IpProtocol": "tcp",
+              "ToPort": 443
+            }
+          ],
+          "VpcId": {
+            "Ref": "myVPC"
+          }
+        }
       }
     },
     "Outputs": {
@@ -206,6 +228,42 @@
                     "DefaultSecurityGroup"
                 ]
             }
-        }
+        },
+        "webSubnetId": {
+            "Description": "The ID of web subnet",
+            "Value": {
+              "Ref": "subnet1"
+            },
+            "Export": {
+              "Name": "csye6225-Networking-web-subnet1"
+            }
+          },
+          "webSubnet2Id": {
+            "Description": "The ID of web subnet",
+            "Value": {
+              "Ref": "subnet2"
+            },
+            "Export": {
+              "Name": "csye6225-Networking-web-subnet2"
+            }
+          },
+          "dbSubnetId": {
+            "Description": "The ID of the db subnet1",
+            "Value": {
+              "Ref": "subnet3"
+            },
+            "Export": {
+              "Name": "csye6225-Networking-db-subnet1Id"
+            }
+          },
+        "elbSecurityGroupId": {
+            "Description": "The ID of the ELB Security Group",
+            "Value": {
+              "Ref": "elbSecurityGroup"
+            },
+            "Export": {
+              "Name": "csye6225-Networking-elb-security-group"
+            }
+          }
     }
 }

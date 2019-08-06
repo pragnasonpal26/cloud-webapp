@@ -1,0 +1,49 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Cloud Formation template for application stack creation - csye6225 summer 19",
+  "Resources": {
+    "elbSecurityGroup": {
+        "Type": "AWS::EC2::SecurityGroup",
+        "Properties": {
+          "GroupName": "elbSecGroup",
+          "GroupDescription": "Security tag for ELB",
+          "SecurityGroupIngress": [
+            {
+              "CidrIp": "0.0.0.0/0",
+              "FromPort": 22,
+              "IpProtocol": "tcp",
+              "ToPort": 22
+            },
+            {
+              "CidrIp": "0.0.0.0/0",
+              "FromPort": 80,
+              "IpProtocol": "tcp",
+              "ToPort": 80
+            },
+            {
+              "CidrIp": "0.0.0.0/0",
+              "FromPort": 443,
+              "IpProtocol": "tcp",
+              "ToPort": 443
+            }
+          ],
+          "VpcId": "vpc-0cd7dd78de7d9c680"
+        }
+      },
+  "LoadBalancer" : {
+    "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
+    "Properties" : {    
+      
+      "Name" : "myELB",
+      "Scheme" : "internet-facing",
+      "Subnets" : [
+          "subnet-078e1fd78ecd5b52c", "subnet-027400bc93e4f1558"
+        ],
+      "SecurityGroups" : [{"Ref" : "elbSecurityGroup"}],
+      "Type" : "application",
+      
+      "IpAddressType" : "ipv4"
+    }
+  }
+  }
+}
