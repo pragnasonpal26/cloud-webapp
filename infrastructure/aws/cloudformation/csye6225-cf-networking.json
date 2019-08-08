@@ -138,68 +138,7 @@
                "SubnetId" : { "Ref" : "subnet3" },
                "RouteTableId" : { "Ref" : "myRouteTable" }
             }
-         },
-          "webAppSecurityGroup": {
-          "Type": "AWS::EC2::SecurityGroup",
-          "Properties": {
-              "GroupDescription": "security group for ec2",
-              "VpcId" : { "Ref" : "myVPC" },
-              "SecurityGroupIngress": [
-                {
-                    "SourceSecurityGroupId": {
-                      "Ref": "elbSecurityGroup"
-                    },
-                    "FromPort": 8080,
-                    "IpProtocol": "tcp",
-                    "ToPort": 8080
-                  },
-                  {
-                    "CidrIp": "0.0.0.0/0",
-                    "FromPort": 22,
-                    "IpProtocol": "tcp",
-                    "ToPort": 22
-                  }
-                ],
-              "Tags": [
-                  {
-                      "Key": "Name",
-                      "Value": "csye6225-webapps-sg"
-                  }
-              ]
-          }
-      },
-      "elbSecurityGroup": {
-        "Type": "AWS::EC2::SecurityGroup",
-        "Properties": {
-          "GroupName": {
-            "Ref": "elbSecurityGroupNameTag"
-          },
-          "GroupDescription": "Security tag for ELB",
-          "SecurityGroupIngress": [
-            {
-              "CidrIp": "0.0.0.0/0",
-              "FromPort": 22,
-              "IpProtocol": "tcp",
-              "ToPort": 22
-            },
-            {
-              "CidrIp": "0.0.0.0/0",
-              "FromPort": 80,
-              "IpProtocol": "tcp",
-              "ToPort": 80
-            },
-            {
-              "CidrIp": "0.0.0.0/0",
-              "FromPort": 443,
-              "IpProtocol": "tcp",
-              "ToPort": 443
-            }
-          ],
-          "VpcId": {
-            "Ref": "myVPC"
-          }
-        }
-      }
+         }
     },
     "Outputs": {
         "CidrBlock": {
@@ -254,15 +193,6 @@
             },
             "Export": {
               "Name": "csye6225-Networking-db-subnet1Id"
-            }
-          },
-        "elbSecurityGroupId": {
-            "Description": "The ID of the ELB Security Group",
-            "Value": {
-              "Ref": "elbSecurityGroup"
-            },
-            "Export": {
-              "Name": "csye6225-Networking-elb-security-group"
             }
           }
     }
