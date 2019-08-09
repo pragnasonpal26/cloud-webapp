@@ -46,7 +46,7 @@ webAppSubnetID=`aws ec2 describe-tags --filters "Name=value,Values=$websubnetnam
 dbSubnetID=`aws ec2 describe-tags --filters "Name=value,Values=$dbsubnetname" --query 'Tags[0].ResourceId' --output text`
 #RDSGROUPID=`aws ec2 describe-tags --filters "Name=value,Values=$rdsgroupname" --query 'Tags[0].ResourceId' --output text`
 InstanceType='t2.micro'
-WEB_ACL_ID='d9e81b85-7586-439b-98a1-88b3dcb32d38'
+WEB_ACL_ID=$(aws waf-regional list-web-acls --query WebACLs[0].WebACLId --output text)
 
 stackId=$(aws cloudformation create-stack --stack-name $name --capabilities CAPABILITY_NAMED_IAM --template-body file://csye6225-cf-auto-scaling-application.json --parameters "ParameterKey=stackName,ParameterValue=$name" \
 "ParameterKey=KeyName,ParameterValue=$keyName" "ParameterKey=ImageId,ParameterValue=$amiID" \

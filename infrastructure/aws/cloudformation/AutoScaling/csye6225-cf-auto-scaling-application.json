@@ -705,44 +705,34 @@
          ]
       }
    },
-   "csye6225NewLoadBalancer":{
-      "Type":"AWS::ElasticLoadBalancingV2::LoadBalancer",
-      "DependsOn":[
-         "ELBSecurityGroup"
-      ],
-      "Properties":{
-         "LoadBalancerAttributes":[
-            {
-               "Key":"idle_timeout.timeout_seconds",
-               "Value":"60"
-            }
-         ],
-         "Name":"csye6225NewLoadBalancer",
-         "Scheme":"internet-facing",
-         "Type":"application",
-         "IpAddressType":"ipv4",
-         "SecurityGroups":[
-            {
-               "Ref":"ELBSecurityGroup"
-            }
-         ],
-         "Subnets":[
-            {
-               "Ref":"webAppSubnetID"
-            },
-            {
-              "Ref":"dbSubnetID"
-           }
-
-         ],
-         "Tags":[
-            {
-               "Key":"Name",
-               "Value":"CSYE6225_autoscaling_group"
-            }
-         ]
-      }
-   },
+   "SSLCertificate" : {
+    "Type" : "AWS::CertificateManager::Certificate",
+    "Properties" : {
+      "DomainName" : {"Ref" : "DomainName"},
+      "DomainValidationOptions" : [ 
+        {
+          "DomainName" : {"Ref" : "DomainName"},
+        "ValidationDomain" : {"Ref" : "DomainName"}
+        }
+       ]        
+    }
+  },
+   "csye6225LoadBalancerListener" : {
+    "Type" : "AWS::ElasticLoadBalancingV2::Listener",
+    "Properties" : {
+      "Certificates" : [ {
+        "CertificateArn" : {"Ref" : "SSLCertificate"}
+      } ],
+      "DefaultActions" : [ {
+        "Type": "forward",
+        "TargetGroupArn": { "Ref": "csye6225TargetGroup" }
+      } ],
+      "LoadBalancerArn" : {"Ref" : "csye6225LoadBalancer"},
+      "Port" : 443,
+      "Protocol" : "HTTPS"
+      
+    }
+  },
    "WebServerGroup":{
       "Type":"AWS::AutoScaling::AutoScalingGroup",
       "DependsOn":[
@@ -857,6 +847,23 @@
     "Properties": {
       "ResourceArn": { "Ref": "csye6225LoadBalancer" },
       "WebACLId": {"Ref":"WebACLId"}
+    }
+  },
+  "myDNS" : {
+    "Type" : "AWS::Route53::RecordSetGroup",
+    "Properties" : {
+      "HostedZoneName" : {"Ref":"hostedzonename"},
+      "Comment" : "Zone apex alias targeted to myELB LoadBalancer.",
+      "RecordSets" : [
+        {
+          "Name" : {"Ref":"hostedzonename"},
+          "Type" : "A",
+          "AliasTarget" : {
+            "HostedZoneId" : {"Fn::GetAtt":["csye6225LoadBalancer","CanonicalHostedZoneNameID"]},
+            "DNSName" : {"Fn::GetAtt":["csye6225LoadBalancer","CanonicalHostedZoneID"]}
+          }
+        }
+      ]
     }
   },
     "MySNSTopic" : {
