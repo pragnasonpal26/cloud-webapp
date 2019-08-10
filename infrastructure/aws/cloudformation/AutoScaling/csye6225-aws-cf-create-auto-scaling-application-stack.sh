@@ -69,4 +69,3 @@ else
     aws cloudformation wait stack-create-complete --stack-name $stackId
     echo "Stack Creation Complete"
 fi
-
