@@ -47,6 +47,7 @@ dbSubnetID=`aws ec2 describe-tags --filters "Name=value,Values=$dbsubnetname" --
 #RDSGROUPID=`aws ec2 describe-tags --filters "Name=value,Values=$rdsgroupname" --query 'Tags[0].ResourceId' --output text`
 InstanceType='t2.micro'
 WEB_ACL_ID=$(aws waf-regional list-web-acls --query WebACLs[0].WebACLId --output text)
+SSL_Cert=$(aws acm list-certificates --query CertificateSummaryList[0].CertificateArn --output text)
 
 stackId=$(aws cloudformation create-stack --stack-name $name --capabilities CAPABILITY_NAMED_IAM --template-body file://csye6225-cf-auto-scaling-application.json --parameters "ParameterKey=stackName,ParameterValue=$name" \
 "ParameterKey=KeyName,ParameterValue=$keyName" "ParameterKey=ImageId,ParameterValue=$amiID" \
@@ -56,7 +57,7 @@ stackId=$(aws cloudformation create-stack --stack-name $name --capabilities CAPA
 "ParameterKey=AccId,ParameterValue=$AccId" "ParameterKey=Img,ParameterValue=$IMG_BUCKET_NAME" \
 "ParameterKey=LambdaBucketName,ParameterValue=$LAMBDA_BUCKET_NAME" "ParameterKey=DomainName,ParameterValue=$DomainName" \
 "ParameterKey=HostedZoneID,ParameterValue=$hostedzoneid" "ParameterKey=hostedzonename,ParameterValue=$hostedzonename" \
-"ParameterKey=WebACLId,ParameterValue=$WEB_ACL_ID" \
+"ParameterKey=WebACLId,ParameterValue=$WEB_ACL_ID" "ParameterKey=SslCert,ParameterValue=$SSL_Cert" \
 --query [StackId] --output text)
 
 echo "Stack Id - "

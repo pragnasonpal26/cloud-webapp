@@ -48,6 +48,9 @@
    },
    "WebACLId":{
     "Type":"String"
+   },
+   "SslCert":{
+     "Type":"String"
    }
   },
   "Resources": {
@@ -705,23 +708,11 @@
          ]
       }
    },
-   "SSLCertificate" : {
-    "Type" : "AWS::CertificateManager::Certificate",
-    "Properties" : {
-      "DomainName" : {"Ref" : "DomainName"},
-      "DomainValidationOptions" : [ 
-        {
-          "DomainName" : {"Ref" : "DomainName"},
-        "ValidationDomain" : {"Ref" : "DomainName"}
-        }
-       ]        
-    }
-  },
    "csye6225LoadBalancerListener" : {
     "Type" : "AWS::ElasticLoadBalancingV2::Listener",
     "Properties" : {
       "Certificates" : [ {
-        "CertificateArn" : {"Ref" : "SSLCertificate"}
+        "CertificateArn" : {"Ref" : "SslCert"}
       } ],
       "DefaultActions" : [ {
         "Type": "forward",
@@ -859,8 +850,8 @@
           "Name" : {"Ref":"hostedzonename"},
           "Type" : "A",
           "AliasTarget" : {
-            "HostedZoneId" : {"Fn::GetAtt":["csye6225LoadBalancer","CanonicalHostedZoneNameID"]},
-            "DNSName" : {"Fn::GetAtt":["csye6225LoadBalancer","CanonicalHostedZoneID"]}
+            "HostedZoneId" : {"Fn::GetAtt":["csye6225LoadBalancer","CanonicalHostedZoneID"]},
+            "DNSName" : {"Fn::GetAtt":["csye6225LoadBalancer","DNSName"]}
           }
         }
       ]
