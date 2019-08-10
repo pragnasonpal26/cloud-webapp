@@ -628,6 +628,22 @@
           }
         }
       },
+      "LambdaInvokePermission": {		
+        "Type": "AWS::Lambda::Permission",		
+        "Properties": {		
+          "FunctionName": {		
+            "Fn::GetAtt": [		
+              "Lambda",		
+              "Arn"		
+            ]		
+          },		
+          "Principal": "sns.amazonaws.com",		
+          "Action": "lambda:InvokeFunction",		
+          "SourceArn": {		
+            "Ref": "MySNSTopic"		
+      }
+    }
+  },
       "MySNSTopic" : {
         "Type" : "AWS::SNS::Topic",
         "Properties" : {
