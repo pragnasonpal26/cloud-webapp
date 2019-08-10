@@ -25,6 +25,7 @@ websubnetname=$stackname'-csye6225-subnet1'
 dbsubnetname=$stackname'-csye6225-subnet3'
 rdsgroupname='csye6225-rds-sg'
 
+
 amiID=$(aws ec2 describe-images --owners self --query 'sort_by(Images, &CreationDate)[-1].ImageId' --output text)
 echo "AMI ID:${amiID}"
 
@@ -68,4 +69,3 @@ else
     aws cloudformation wait stack-create-complete --stack-name $stackId
     echo "Stack Creation Complete"
 fi
-
