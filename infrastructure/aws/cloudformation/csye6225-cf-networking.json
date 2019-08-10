@@ -138,46 +138,7 @@
                "SubnetId" : { "Ref" : "subnet3" },
                "RouteTableId" : { "Ref" : "myRouteTable" }
             }
-         },
-          "webAppSecurityGroup": {
-          "Type": "AWS::EC2::SecurityGroup",
-          "Properties": {
-              "GroupDescription": "security group for ec2",
-              "VpcId" : { "Ref" : "myVPC" },
-              "SecurityGroupIngress": [
-                  {
-                      "IpProtocol": "tcp",
-                      "FromPort": "80",
-                      "ToPort": "80",
-                      "CidrIp": "0.0.0.0/0"
-                  },
-                  {
-                      "IpProtocol": "tcp",
-                      "FromPort": "22",
-                      "ToPort": "22",
-                      "CidrIp": "0.0.0.0/0"
-                  },
-                  {
-                      "IpProtocol": "tcp",
-                      "FromPort": "443",
-                      "ToPort": "443",
-                      "CidrIp": "0.0.0.0/0"
-                  },
-                  {
-                      "IpProtocol": "tcp",
-                      "FromPort": "8080",
-                      "ToPort": "8080",
-                      "CidrIp": "0.0.0.0/0"
-                  }
-              ],
-              "Tags": [
-                  {
-                      "Key": "Name",
-                      "Value": "csye6225-webapps-sg"
-                  }
-              ]
-          }
-      }
+         }
     },
     "Outputs": {
         "CidrBlock": {
@@ -206,6 +167,33 @@
                     "DefaultSecurityGroup"
                 ]
             }
-        }
+        },
+        "webSubnetId": {
+            "Description": "The ID of web subnet",
+            "Value": {
+              "Ref": "subnet1"
+            },
+            "Export": {
+              "Name": "csye6225-Networking-web-subnet1"
+            }
+          },
+          "webSubnet2Id": {
+            "Description": "The ID of web subnet",
+            "Value": {
+              "Ref": "subnet2"
+            },
+            "Export": {
+              "Name": "csye6225-Networking-web-subnet2"
+            }
+          },
+          "dbSubnetId": {
+            "Description": "The ID of the db subnet1",
+            "Value": {
+              "Ref": "subnet3"
+            },
+            "Export": {
+              "Name": "csye6225-Networking-db-subnet1Id"
+            }
+          }
     }
 }
