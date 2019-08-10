@@ -46,9 +46,6 @@
       "Description":"Hosted zone",
       "Type":"String"
    },
-   "WebACLId":{
-    "Type":"String"
-   },
    "SslCert":{
      "Type":"String"
    }
@@ -833,13 +830,6 @@
          "ComparisonOperator":"LessThanThreshold"
       }
    },
-   "MyWebACLAssociation": {
-    "Type": "AWS::WAFRegional::WebACLAssociation",
-    "Properties": {
-      "ResourceArn": { "Ref": "csye6225LoadBalancer" },
-      "WebACLId": {"Ref":"WebACLId"}
-    }
-  },
   "myDNS" : {
     "Type" : "AWS::Route53::RecordSetGroup",
     "Properties" : {
@@ -861,12 +851,28 @@
       "Type" : "AWS::SNS::Topic",
       "Properties" : {
         "Subscription" : [{
-          "Endpoint" : {"Fn::Sub": "${Lambda.Arn}"},
+          "Endpoint" : {"Fn::GetAtt": [ "Lambda", "Arn" ]},
           "Protocol" : "LAMBDA"
         }],
         "TopicName" : "password_reset"
       }
     },
+    "LambdaInvokePermission": {		
+      "Type": "AWS::Lambda::Permission",		
+      "Properties": {		
+        "FunctionName": {		
+          "Fn::GetAtt": [		
+            "Lambda",		
+            "Arn"		
+          ]		
+        },		
+        "Principal": "sns.amazonaws.com",		
+        "Action": "lambda:InvokeFunction",		
+        "SourceArn": {		
+          "Ref": "MySNSTopic"		
+    }
+  }
+},
     "CodeDeployApplication": {
       "Type": "AWS::CodeDeploy::Application",
       "Properties": {
