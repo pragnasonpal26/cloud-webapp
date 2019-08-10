@@ -537,6 +537,13 @@
          },
          "RoleName":"lambdasnsexecution",
          "Path": "/",
+         "ManagedPolicyArns":[
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          "arn:aws:iam::aws:policy/AmazonSESFullAccess",
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaDynamoDBExecutionRole",
+          "arn:aws:iam::aws:policy/AmazonSNSFullAccess",
+          "arn:aws:iam::aws:policy/AWSLambdaFullAccess"
+       ],
          "Policies": [ {
             "PolicyName": "lambda-sns-execution",
             "PolicyDocument": {
@@ -621,6 +628,22 @@
           }
         }
       },
+      "LambdaInvokePermission": {		
+        "Type": "AWS::Lambda::Permission",		
+        "Properties": {		
+          "FunctionName": {		
+            "Fn::GetAtt": [		
+              "Lambda",		
+              "Arn"		
+            ]		
+          },		
+          "Principal": "sns.amazonaws.com",		
+          "Action": "lambda:InvokeFunction",		
+          "SourceArn": {		
+            "Ref": "MySNSTopic"		
+      }
+    }
+  },
       "MySNSTopic" : {
         "Type" : "AWS::SNS::Topic",
         "Properties" : {
