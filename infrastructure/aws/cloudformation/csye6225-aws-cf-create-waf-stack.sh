@@ -18,8 +18,8 @@ STACK_ID=$(\aws cloudformation create-stack --stack-name ${STACK_NAME} \
 echo "Waiting on ${STACK_ID} create completion.."
 aws cloudformation wait stack-create-complete --stack-name ${STACK_ID}
 if [ $? -ne 0 ]; then
-	echo "Application Stack creation failed!"
+	echo "Waf creation failed!"
     exit 1
 else
-    echo "EC2 Instance, RDS, security groups, DynamoDB Table and S3 Bucket created!"
+    echo "Waf created successfully!"
 fi
