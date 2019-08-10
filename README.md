@@ -19,13 +19,17 @@
 | Swagger (2.9.2)        | 
 | mysql-connector (5.1.6)| 
 | MySql Workbench        | 
-|IDE - Eclipse/IntelliJ  |
+| IDE - Eclipse/IntelliJ |
 | AWS                    |
+| Postman                |
+| JMeter                 |
+| CircleCI               |
+| NameCheap              |
  
 
 ## Build Instructions
 
-| Steps to Run the Application                                                                                          | 
+| Steps to Run the Application locally                                                                                        | 
 | ---                                                                                                                   | 
 | Go to IDE                                                                                                             | 
 | Import project as Existing Maven Project                                                                              |
@@ -34,11 +38,7 @@
 | Note: MySQL installation and setup is required before you run the app. Use the queries below to set up your data base | 
 
 ## Deploy Instructions
-
+Deployed with CircleCI and AWS CodeDeploy.
 
 ## Running Tests
-
-
-## CI/CD
-
-
+Load the jmeter.jmx file in Jmeter
