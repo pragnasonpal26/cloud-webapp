@@ -633,7 +633,7 @@
         "ManagedPolicyArns": [
           "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
           "arn:aws:iam::aws:policy/AmazonSESFullAccess",
-          "arn:aws:iam::aws:policy/service-role/AWSLambdaDynamoDBExecutionRole",
+          "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess",
           "arn:aws:iam::aws:policy/AmazonSNSFullAccess",
           "arn:aws:iam::aws:policy/AWSLambdaFullAccess"
         ],
@@ -660,48 +660,31 @@
         ]
       }
     },
-    "myLambda": {
+    "Lambda": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
-        "FunctionName": {
-          "Ref": "AWS::StackName"
-        },
-        "Environment": {
-          "Variables": {
-            "SYSTEM_EMAIL": {
+          "FunctionName" : {"Ref": "AWS::StackName"},
+          "Environment" : { "Variables" : {
+            "SYSTEM_EMAIL" : {
               "Fn::Join": [
                 "",
                 [
-                  "admin@",
-                  {
-                    "Ref": "DomainName"
-                  }
+                  "admin@", {"Ref":"DomainName"}
                 ]
               ]
             },
-            "DOMAIN_NAME": {
-              "Ref": "DomainName"
-            }
-          }
-        },
-        "Handler": "LogEvent::handleRequest",
-        "Role": {
-          "Fn::GetAtt": [
-            "lambdasnsexecution",
-            "Arn"
-          ]
-        },
-        "Code": {
-          "S3Bucket": {
-            "Ref": "LambdaBucketName"
+            "DOMAIN_NAME" : {"Ref":"DomainName"}}},
+          "Handler": "LogEvent::handleRequest",
+          "Role": { "Fn::GetAtt" : ["lambdasnsexecution", "Arn"] },
+          "Code": {
+              "S3Bucket": {"Ref": "LambdaBucketName"},
+              "S3Key": "com.neu.csye6225.lambda-0.0.1.zip"
           },
-          "S3Key": "com.neu.csye6225.lambda-0.0.1.zip"
-        },
-        "Runtime": "java8",
-        "Timeout": "25",
-        "MemorySize": "512"
+          "Runtime": "java8",
+          "Timeout": "25",
+          "MemorySize":"512"
       }
-    },
+  },
     "csye6225TargetGroup": {
       "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
       "Properties": {
@@ -934,41 +917,32 @@
         ]
       }
     },
-    "ResetPasswordTopic": {
-      "Type": "AWS::SNS::Topic",
-      "DependsOn": "myLambda",
-      "Properties": {
-        "TopicName": "reset_password",
-        "Subscription": [
-          {
-            "Endpoint": {
-              "Fn::GetAtt": [
-                "myLambda",
-                "Arn"
-              ]
-            },
-            "Protocol": "lambda"
-          }
-        ],
-        "DisplayName": "Reset"
+    "MySNSTopic" : {
+      "Type" : "AWS::SNS::Topic",
+      "Properties" : {
+        "Subscription" : [{
+          "Endpoint" : {"Fn::GetAtt": [ "Lambda", "Arn" ]},
+          "Protocol" : "LAMBDA"
+        }],
+        "TopicName" : "password_reset"
       }
     },
-    "LambdaInvokePermission": {
-      "Type": "AWS::Lambda::Permission",
-      "Properties": {
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "myLambda",
-            "Arn"
-          ]
-        },
-        "Principal": "sns.amazonaws.com",
-        "Action": "lambda:InvokeFunction",
-        "SourceArn": {
-          "Ref": "ResetPasswordTopic"
-        }
-      }
-    },
+    "LambdaInvokePermission": {		
+      "Type": "AWS::Lambda::Permission",		
+      "Properties": {		
+        "FunctionName": {		
+          "Fn::GetAtt": [		
+            "Lambda",		
+            "Arn"		
+          ]		
+        },		
+        "Principal": "sns.amazonaws.com",		
+        "Action": "lambda:InvokeFunction",		
+        "SourceArn": {		
+          "Ref": "MySNSTopic"		
+    }
+  }
+},
     "CodeDeployApplication": {
       "Type": "AWS::CodeDeploy::Application",
       "Properties": {
