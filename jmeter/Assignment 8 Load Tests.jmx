@@ -17,8 +17,8 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">5</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">5</stringProp>
+        <stringProp name="ThreadGroup.num_threads">1000</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">70</stringProp>
         <longProp name="ThreadGroup.start_time">1565460770000</longProp>
         <longProp name="ThreadGroup.end_time">1565460770000</longProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
@@ -68,10 +68,6 @@
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Accept</stringProp>
                 <stringProp name="Header.value">application/json</stringProp>
-              </elementProp>
-              <elementProp name="" elementType="Header">
-                <stringProp name="Header.name"></stringProp>
-                <stringProp name="Header.value"></stringProp>
               </elementProp>
             </collectionProp>
           </HeaderManager>
@@ -175,8 +171,8 @@
             <collectionProp name="AuthManager.auth_list">
               <elementProp name="" elementType="Authorization">
                 <stringProp name="Authorization.url">https://csye6225-su19-haridasb.me</stringProp>
-                <stringProp name="Authorization.username">haridas.b@husky.neu.edu</stringProp>
-                <stringProp name="Authorization.password">test</stringProp>
+                <stringProp name="Authorization.username">${email}@em.com</stringProp>
+                <stringProp name="Authorization.password">${password}</stringProp>
                 <stringProp name="Authorization.domain"></stringProp>
                 <stringProp name="Authorization.realm"></stringProp>
               </elementProp>
